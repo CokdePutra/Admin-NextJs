@@ -1,13 +1,23 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const mysql = require("mysql2");
-const routes = require("./routes");
+const cors = require("cors");
+const userRoutes = require("./routes/userRoutes");
 
 dotenv.config();
 
 const app = express();
 
-// Create MySQL connection
+// Middleware
+app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  }),
+);
+
+// Database connection
 const db = mysql.createConnection({
   host: process.env.DATABASE_HOST,
   user: process.env.DATABASE_USER,
@@ -15,19 +25,18 @@ const db = mysql.createConnection({
   database: process.env.DATABASE_NAME,
 });
 
-// Connect to MySQL
-db.connect((err) => {
-  if (err) {
-    console.error("Error connecting to MySQL:", err);
-    return;
-  }
-  console.log("Connected to MySQL");
+// Add db to request object
+app.use((req, res, next) => {
+  req.db = db;
+  next();
 });
 
-app.use(express.json());
+// Routes
+const routes = require("./routes");
 app.use("/api", routes);
 
+// Start server
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port http://localhost:${PORT}/api/`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
