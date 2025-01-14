@@ -1,18 +1,14 @@
 "use client";
 
 import ButtonDefault from "../Buttons/ButtonDefault";
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-interface User {
-  id_user: number;
-  nama: string;
-  nim: string;
-  no_telp: string;
-  golongan_darah: string;
-  tanggal_lahir: string;
-  alamat: string;
+interface Event {
+  id_event: number;
+  nama_event: string;
+  tanggal_event: string;
+  deskripsi: string;
 }
 
 const api = axios.create({
@@ -20,30 +16,30 @@ const api = axios.create({
   withCredentials: true
 });
 
-const TableUsers = () => {
-  const [users, setUsers] = useState<User[]>([]);
+const TableEvents = () => {
+  const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchEvents = async () => {
       try {
-        const { data } = await api.get("/users");
-        setUsers(data);
+        const { data } = await api.get("/events");
+        setEvents(data);
       } catch (error) {
-        setError('Failed to fetch users');
+        setError('Failed to fetch events');
         console.error(error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUsers();
+    fetchEvents();
   }, []);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-  if (!users.length) return <div>No users found</div>;
+  if (!events.length) return <div>No events found</div>;
 
   return (
     <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
@@ -52,19 +48,13 @@ const TableUsers = () => {
           <thead>
             <tr className="bg-[#F7F9FC] text-left dark:bg-dark-2">
               <th className="min-w-[220px] px-4 py-4 font-medium text-dark dark:text-white xl:pl-7.5">
-                Nama
+                Nama Event
               </th>
               <th className="min-w-[150px] px-4 py-4 font-medium text-dark dark:text-white">
-                NIM
+                Tanggal Event
               </th>
               <th className="min-w-[120px] px-4 py-4 font-medium text-dark dark:text-white">
-                No. Telp
-              </th>
-              <th className="min-w-[120px] px-4 py-4 font-medium text-dark dark:text-white">
-                Tanggal Lahir
-              </th>
-              <th className="min-w-[120px] px-4 py-4 font-medium text-dark dark:text-white">
-                Golongan Darah
+                Deskripsi
               </th>
               <th className="px-4 py-4 text-right font-medium text-dark dark:text-white xl:pr-7.5">
                 Actions
@@ -72,38 +62,25 @@ const TableUsers = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user, index) => (
-              <tr key={user.id_user}>
+            {events.map((event, index) => (
+              <tr key={event.id_event}>
                 <td className={`border-[#eee] px-4 py-4 dark:border-dark-3 xl:pl-7.5 ${
-                  index === users.length - 1 ? "border-b-0" : "border-b"
+                  index === events.length - 1 ? "border-b-0" : "border-b"
                 }`}>
-                  <h5 className="text-dark dark:text-white">{user.nama}</h5>
-                  <p className="mt-[3px] text-body-sm font-medium">{user.alamat}</p>
+                  <h5 className="text-dark dark:text-white">{event.nama_event}</h5>
                 </td>
                 <td className={`border-[#eee] px-4 py-4 dark:border-dark-3 ${
-                  index === users.length - 1 ? "border-b-0" : "border-b"
+                  index === events.length - 1 ? "border-b-0" : "border-b"
                 }`}>
-                  <p className="text-dark dark:text-white">{user.nim}</p>
+                  <p className="text-dark dark:text-white">{new Date(event.tanggal_event).toLocaleDateString()}</p>
                 </td>
                 <td className={`border-[#eee] px-4 py-4 dark:border-dark-3 ${
-                  index === users.length - 1 ? "border-b-0" : "border-b"
+                  index === events.length - 1 ? "border-b-0" : "border-b"
                 }`}>
-                  <p className="text-dark dark:text-white">{user.no_telp}</p>
-                </td>
-                <td className={`border-[#eee] px-4 py-4 dark:border-dark-3 ${
-                  index === users.length - 1 ? "border-b-0" : "border-b"
-                }`}>
-                  <p className="text-dark dark:text-white">{new Date(user.tanggal_lahir).toLocaleDateString()}</p>
-                </td>
-                <td className={`border-[#eee] px-4 py-4 dark:border-dark-3 ${
-                  index === users.length - 1 ? "border-b-0" : "border-b"
-                }`}>
-                  <p className="inline-flex rounded-full px-3.5 py-1 text-body-sm font-medium bg-[#219653]/[0.08] text-[#219653]">
-                    {user.golongan_darah}
-                  </p>
+                  <p className="text-dark dark:text-white">{event.deskripsi}</p>
                 </td>
                 <td className={`border-[#eee] px-4 py-4 dark:border-dark-3 xl:pr-7.5 ${
-                  index === users.length - 1 ? "border-b-0" : "border-b"
+                  index === events.length - 1 ? "border-b-0" : "border-b"
                 }`}>
                   <div className="flex items-center justify-end space-x-3.5">
                     <ButtonDefault
@@ -129,5 +106,4 @@ const TableUsers = () => {
   );
 };
 
-export default TableUsers;
-
+export default TableEvents;
