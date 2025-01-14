@@ -10,6 +10,7 @@ interface Event {
     nama_event: string;
     tanggal_event: string;
     deskripsi: string;
+    keterangan: string;
 }
 
 const api = axios.create({
@@ -28,7 +29,11 @@ const EventCard = forwardRef((props, ref) => {
         const fetchEvents = async () => {
             try {
                 const { data } = await api.get("/events");
-                setEvents(data);
+                const updatedEvents = data.map((event: Event) => ({
+                    ...event,
+                    keterangan: determineKeterangan(event.tanggal_event)
+                }));
+                setEvents(updatedEvents);
             } catch (error) {
                 setError('Failed to fetch events');
                 console.error(error);
@@ -40,20 +45,34 @@ const EventCard = forwardRef((props, ref) => {
         fetchEvents();
     }, []);
 
+    const determineKeterangan = (date: string) => {
+        const eventDate = new Date(date).setHours(0, 0, 0, 0);
+        const today = new Date().setHours(0, 0, 0, 0);
+        if (eventDate === today) {
+            return "Running";
+        } else if (eventDate < today) {
+            return "Finished";
+        } else {
+            return "Coming Soon";
+        }
+    };
+
     const handleEditEvent = (event: Event) => {
         setCurrentEvent(event);
         setShowModal(true);
     };
 
     const handleUpdateEvent = async (name: string, date: string, description: string) => {
+        const keterangan = determineKeterangan(date);
         if (currentEvent) {
             try {
                 await api.put(`/events/${currentEvent.id_event}`, {
                     nama_event: name,
                     tanggal_event: date,
                     deskripsi: description,
+                    keterangan: keterangan,
                 });
-                setEvents(events.map(e => e.id_event === currentEvent.id_event ? { ...e, nama_event: name, tanggal_event: date, deskripsi: description } : e));
+                setEvents(events.map(e => e.id_event === currentEvent.id_event ? { ...e, nama_event: name, tanggal_event: date, deskripsi: description, keterangan: keterangan } : e));
                 setCurrentEvent(null); // Clear the current event after updating
             } catch (error) {
                 console.error('Failed to update event', error);
@@ -63,11 +82,13 @@ const EventCard = forwardRef((props, ref) => {
     };
 
     const handleAddEvent = async (name: string, date: string, description: string) => {
+        const keterangan = determineKeterangan(date);
         try {
             const { data } = await api.post("/events", {
                 nama_event: name,
                 tanggal_event: date,
                 deskripsi: description,
+                keterangan: keterangan,
             });
             setEvents([...events, data]);
         } catch (error) {
@@ -126,6 +147,7 @@ const EventCard = forwardRef((props, ref) => {
                         <h2 className="text-2xl font-bold text-dark dark:text-white mb-2">{event.nama_event}</h2>
                         <p className="text-dark dark:text-white mb-4">{new Date(event.tanggal_event).toLocaleDateString()}</p>
                         <p className="text-dark dark:text-white">{event.deskripsi}</p>
+                        <p className="text-dark dark:text-white">{event.keterangan}</p>
                         <div className="flex justify-end mt-4">
                             <ButtonDefault
                                 label="Edit"

@@ -9,11 +9,11 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout";
 
 const ListEvent = () => {
   const [showModal, setShowModal] = useState(false);
-  const eventCardRef = useRef<{ handleAddEvent: (name: string, date: string, description: string) => void }>(null);
+  const eventCardRef = useRef<{ handleAddEvent: (name: string, date: string, description: string, keterangan: string) => void }>(null);
 
-  const handleAddEvent = (name: string, date: string, description: string) => {
+  const handleAddEvent = (name: string, date: string, description: string, keterangan: string) => {
     if (eventCardRef.current) {
-      eventCardRef.current.handleAddEvent(name, date, description);
+      eventCardRef.current.handleAddEvent(name, date, description, keterangan);
     }
   };
 
