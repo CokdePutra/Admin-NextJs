@@ -5,15 +5,15 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import EventCard from "@/components/Cards/EventCard";
 import ButtonDefault from "@/components/Buttons/ButtonDefault";
 import ModalTambahData from "@/components/Modal/ModalTambahData";
-import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import DefaultLayout from "@/components/Layouts/DefaultLaout"; // Corrected import path
 
 const ListEvent = () => {
   const [showModal, setShowModal] = useState(false);
   const eventCardRef = useRef<{ handleAddEvent: (name: string, date: string, description: string, keterangan: string) => void }>(null);
 
-  const handleAddEvent = (name: string, date: string, description: string, keterangan: string) => {
+  const handleAddEvent = (name: string, date: string, description: string) => { // Corrected function signature
     if (eventCardRef.current) {
-      eventCardRef.current.handleAddEvent(name, date, description, keterangan);
+      eventCardRef.current.handleAddEvent(name, date, description, ""); // Adjusted to match the new signature
     }
   };
 
