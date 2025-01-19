@@ -5,7 +5,7 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import EventCard from "@/components/Cards/EventCard";
 import ButtonDefault from "@/components/Buttons/ButtonDefault";
 import ModalTambahData from "@/components/Modal/ModalTambahData";
-import DefaultLayout from "@/components/Layouts/DefaultLaout"; // Corrected import path
+import DefaultLayout from "@/components/Layouts/DefaultLayout"; // Corrected import path
 
 const ListEvent = () => {
   const [showModal, setShowModal] = useState(false);
@@ -32,7 +32,6 @@ const ListEvent = () => {
         </div>
         <EventCard ref={eventCardRef} />
       </div>
-
       <ModalTambahData
         show={showModal}
         onClose={() => setShowModal(false)}

@@ -5,7 +5,7 @@ import TableTwo from "@/components/Tables/TableTwo";
 import TableUsers from "@/components/Tables/TableUsers";
 
 import { Metadata } from "next";
-import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
 export const metadata: Metadata = {
   title: "Next.js Tables Page | NextAdmin - Next.js Dashboard Kit",

@@ -1,7 +1,6 @@
 "use client";
 
 import ButtonDefault from "../Buttons/ButtonDefault";
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -15,12 +14,17 @@ interface User {
   alamat: string;
 }
 
+interface TableUsersProps {
+  onEditUser: (user: User) => void;
+  onDeleteUser: (id: number) => void;
+}
+
 const api = axios.create({
   baseURL: 'http://localhost:4000/api',
   withCredentials: true
 });
 
-const TableUsers = () => {
+const TableUsers: React.FC<TableUsersProps> = ({ onEditUser, onDeleteUser }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -107,16 +111,14 @@ const TableUsers = () => {
                 }`}>
                   <div className="flex items-center justify-end space-x-3.5">
                     <ButtonDefault
-                        label="Edit"
-                        link="#"
-                        customClasses="bg-primary text-white rounded-[5px] px-10 mx-3 py-3.5 lg:px-8 xl:px-10"
-                        // onClick={() => handleEditEvent(event)}
+                      label="Edit"
+                      customClasses="bg-primary text-white rounded-[5px] px-10 mx-3 py-3.5 lg:px-8 xl:px-10"
+                      onClick={() => onEditUser(user)}
                     />
                     <ButtonDefault
-                        label="Delete"
-                        link="#"
-                        customClasses="bg-red text-white rounded-[5px] px-10 mx-3 py-3.5 lg:px-8 xl:px-10"
-                        // onClick={() => handleDeleteEvent(event.id_event)}
+                      label="Delete"
+                      customClasses="bg-red text-white rounded-[5px] px-10 mx-3 py-3.5 lg:px-8 xl:px-10"
+                      onClick={() => onDeleteUser(user.id_user)}
                     />
                   </div>
                 </td>

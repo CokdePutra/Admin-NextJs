@@ -4,17 +4,19 @@ interface ModalTambahUserProps {
   show: boolean;
   onClose: () => void;
   onAddUser: (name: string, nim: string, no_telp: string, golongan_darah: string, tanggal_lahir: string, alamat: string) => void;
+  onEditUser: (id: number, name: string, nim: string, no_telp: string, golongan_darah: string, tanggal_lahir: string, alamat: string) => void;
   user?: {
-    nama?: string;
-    nim?: string;
-    no_telp?: string;
-    golongan_darah?: string;
-    tanggal_lahir?: string;
-    alamat?: string;
+    id_user: number;
+    nama: string;
+    nim: string;
+    no_telp: string;
+    golongan_darah: string;
+    tanggal_lahir: string;
+    alamat: string;
   };
 }
 
-const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddUser, user }) => {
+const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddUser, onEditUser, user }) => {
   const [userName, setUserName] = useState("");
   const [userNim, setUserNim] = useState("");
   const [userNoTelp, setUserNoTelp] = useState("");
@@ -33,8 +35,12 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
     }
   }, [user]);
 
-  const handleAddUser = () => {
-    onAddUser(userName, userNim, userNoTelp, userGolonganDarah, userTanggalLahir, userAlamat);
+  const handleSaveUser = () => {
+    if (user && user.id_user) {
+      onEditUser(user.id_user, userName, userNim, userNoTelp, userGolonganDarah, userTanggalLahir, userAlamat);
+    } else {
+      onAddUser(userName, userNim, userNoTelp, userGolonganDarah, userTanggalLahir, userAlamat);
+    }
     onClose();
   };
 
@@ -93,7 +99,7 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
             Cancel
           </button>
           <button
-            onClick={handleAddUser}
+            onClick={handleSaveUser}
             className="px-4 py-2 bg-blue-500 text-white rounded"
           >
             {user ? "Update User" : "Add User"}
