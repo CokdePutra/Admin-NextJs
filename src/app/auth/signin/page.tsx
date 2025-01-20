@@ -13,8 +13,7 @@ export const metadata: Metadata = {
 
 const SignIn: React.FC = () => {
   return (
-    <DefaultLayout>
-      <Breadcrumb pageName="Sign In" />
+<>
 
       <div className="rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
         <div className="flex flex-wrap items-center">
@@ -59,7 +58,7 @@ const SignIn: React.FC = () => {
                 <Image
                   src={"/images/grids/grid-02.svg"}
                   alt="Logo"
-                  width={405}
+                  width={405}   
                   height={325}
                   className="mx-auto dark:opacity-30"
                 />
@@ -68,7 +67,7 @@ const SignIn: React.FC = () => {
           </div>
         </div>
       </div>
-    </DefaultLayout>
+      </>
   );
 };
 
