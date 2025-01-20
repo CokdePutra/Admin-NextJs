@@ -32,7 +32,7 @@ const ModalTambahData: React.FC<ModalTambahDataProps> = ({ show, onClose, onAddE
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-999">
       <div className="bg-white p-6 rounded-lg">
         <h2 className="text-2xl font-bold mb-4">{event ? "Edit Event" : "Tambah Event"}</h2>
         <input

@@ -6,12 +6,15 @@ import axios from "axios";
 
 interface User {
   id_user: number;
+  email: string;
+  password: string;
   nama: string;
   nim: string;
   no_telp: string;
   golongan_darah: string;
   tanggal_lahir: string;
   alamat: string;
+  level_user: string;
 }
 
 interface TableUsersProps {
@@ -59,6 +62,9 @@ const TableUsers: React.FC<TableUsersProps> = ({ onEditUser, onDeleteUser }) => 
                 Nama
               </th>
               <th className="min-w-[150px] px-4 py-4 font-medium text-dark dark:text-white">
+                Alamat
+              </th>
+              <th className="min-w-[150px] px-4 py-4 font-medium text-dark dark:text-white">
                 NIM
               </th>
               <th className="min-w-[120px] px-4 py-4 font-medium text-dark dark:text-white">
@@ -82,6 +88,12 @@ const TableUsers: React.FC<TableUsersProps> = ({ onEditUser, onDeleteUser }) => 
                   index === users.length - 1 ? "border-b-0" : "border-b"
                 }`}>
                   <h5 className="text-dark dark:text-white">{user.nama}</h5>
+                  <p className="text-body-sm  font-medium">{user.level_user}</p>
+                  <p className="text-body-sm  font-medium">{user.email}</p>
+                </td>
+                <td className={`border-[#eee] px-4 py-4 dark:border-dark-3 ${
+                  index === users.length - 1 ? "border-b-0" : "border-b"
+                }`}>
                   <p className="mt-[3px] text-body-sm font-medium">{user.alamat}</p>
                 </td>
                 <td className={`border-[#eee] px-4 py-4 dark:border-dark-3 ${

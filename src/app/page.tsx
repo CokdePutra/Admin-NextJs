@@ -16,37 +16,33 @@ const api = axios.create({
 
 interface User {
   id_user: number;
+  email: string;
+  password: string;
   nama: string;
   nim: string;
   no_telp: string;
   golongan_darah: string;
   tanggal_lahir: string;
   alamat: string;
+  level_user: string;
 }
-
-type SelectedUser = {
-  id_user: number;
-  nama: string;
-  nim: string;
-  no_telp: string;
-  golongan_darah: string;
-  tanggal_lahir: string;
-  alamat: string;
-} | null;
 
 const Home = () => {
   const [showModal, setShowModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<SelectedUser>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  const handleAddUser = async (name: string, nim: string, no_telp: string, golongan_darah: string, tanggal_lahir: string, alamat: string) => {
+  const handleAddUser = async (email: string, password: string, name: string, nim: string, no_telp: string, golongan_darah: string, tanggal_lahir: string, alamat: string, level_user: string) => {
     try {
       const response = await api.post("/users", {
+        email: email,
+        password: password,
         nama: name,
         nim: nim,
         no_telp: no_telp,
         golongan_darah: golongan_darah,
         tanggal_lahir: tanggal_lahir,
         alamat: alamat,
+        level_user: level_user,
       });
       console.log("User added:", response.data);
       setShowModal(false);
@@ -56,15 +52,18 @@ const Home = () => {
     }
   };
 
-  const handleEditUser = async (id: number, name: string, nim: string, no_telp: string, golongan_darah: string, tanggal_lahir: string, alamat: string) => {
+  const handleEditUser = async (id: number, email: string, password: string, name: string, nim: string, no_telp: string, golongan_darah: string, tanggal_lahir: string, alamat: string, level_user: string) => {
     try {
       const response = await api.put(`/users/${id}`, {
+        email: email,
+        password: password,
         nama: name,
         nim: nim,
         no_telp: no_telp,
         golongan_darah: golongan_darah,
         tanggal_lahir: tanggal_lahir,
         alamat: alamat,
+        level_user: level_user,
       });
       console.log("User updated:", response.data);
       setShowModal(false);
@@ -113,7 +112,7 @@ const Home = () => {
         onClose={() => setShowModal(false)}
         onAddUser={handleAddUser}
         onEditUser={handleEditUser}
-        user={selectedUser as User | undefined}
+        user={selectedUser}
       />
     </DefaultLayout>
   );

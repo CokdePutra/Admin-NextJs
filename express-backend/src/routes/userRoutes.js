@@ -28,14 +28,33 @@ router.get("/:id", async (req, res) => {
 
 // Create user
 router.post("/", async (req, res) => {
-  const { nama, nim, no_telp, golongan_darah, tanggal_lahir, alamat } =
-    req.body;
+  const {
+    email,
+    password,
+    nama,
+    nim,
+    no_telp,
+    golongan_darah,
+    tanggal_lahir,
+    alamat,
+    level_user,
+  } = req.body;
   try {
     const [result] = await req.db
       .promise()
       .query(
-        "INSERT INTO tb_user (nama, nim, no_telp, golongan_darah, tanggal_lahir, alamat) VALUES (?, ?, ?, ?, ?, ?)",
-        [nama, nim, no_telp, golongan_darah, tanggal_lahir, alamat],
+        "INSERT INTO tb_user (email, password, nama, nim, no_telp, golongan_darah, tanggal_lahir, alamat, level_user) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+          email,
+          password,
+          nama,
+          nim,
+          no_telp,
+          golongan_darah,
+          tanggal_lahir,
+          alamat,
+          level_user,
+        ],
       );
     res.status(201).json({ id_user: result.insertId, ...req.body });
   } catch (error) {
@@ -45,20 +64,32 @@ router.post("/", async (req, res) => {
 
 // Update user
 router.put("/:id", async (req, res) => {
-  const { nama, nim, no_telp, golongan_darah, tanggal_lahir, alamat } =
-    req.body;
+  const {
+    email,
+    password,
+    nama,
+    nim,
+    no_telp,
+    golongan_darah,
+    tanggal_lahir,
+    alamat,
+    level_user,
+  } = req.body;
   try {
     const [result] = await req.db
       .promise()
       .query(
-        "UPDATE tb_user SET nama = ?, nim = ?, no_telp = ?, golongan_darah = ?, tanggal_lahir = ?, alamat = ? WHERE id_user = ?",
+        "UPDATE tb_user SET email = ?, password = ?, nama = ?, nim = ?, no_telp = ?, golongan_darah = ?, tanggal_lahir = ?, alamat = ?, level_user = ? WHERE id_user = ?",
         [
+          email,
+          password,
           nama,
           nim,
           no_telp,
           golongan_darah,
           tanggal_lahir,
           alamat,
+          level_user,
           req.params.id,
         ],
       );
