@@ -12,7 +12,8 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "http://localhost:3000", // Update this to your frontend domain in production
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   }),
 );

@@ -1,7 +1,7 @@
-import ECommerce from "@/components/Dashboard/E-commerce";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React from "react";
+import DataKSR from "@/components/Dashboard/DataKSR";
 
 export const metadata: Metadata = {
   title:
@@ -13,7 +13,7 @@ const Dashboard = () => {
     return (
     <>
       <DefaultLayout>
-        <ECommerce />
+        <DataKSR />
       </DefaultLayout>
     </>
   );
