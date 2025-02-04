@@ -138,21 +138,23 @@ export default function Home() {
           <h2 className="text-4xl font-bold text-center mb-2 text-black">KEGIATAN</h2>
           <h2 className="text-2xl text-center mb-10 text-black">KSR ITB STIKOM Bali</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {activities.map((activity) => (
-              <div key={activity.title} className="bg-white rounded-lg shadow-lg overflow-hidden">
-                <Image src={activity.image} alt={activity.title} width={300} height={200} className="w-full h-48 object-cover" />
-                <div className="p-4">
-                  <h3 className="font-bold text-black text-xl mb-2">{activity.title}</h3>
-                  <p className="text-black text-sm">{activity.description}</p>
-                  <button className="mt-4 bg-teal-800 text-white px-4 py-2 rounded-md hover:bg-teal-700 w-full">
-                    Selengkapnya
-                  </button>
-                </div>
-              </div>
-            ))}
+        {activities.map((activity) => (
+          <div key={activity.title} className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full">
+            <Image src={activity.image} alt={activity.title} width={300} height={200} className="w-full h-48 object-cover" />
+            <div className="p-4 flex flex-col flex-grow">
+          <div className="flex-grow">
+            <h3 className="font-bold text-black text-xl mb-2">{activity.title}</h3>
+            <p className="text-black text-sm">{activity.description}</p>
+          </div>
+          <button className="mt-4 bg-teal-800 text-white px-4 py-2 rounded-md hover:bg-teal-700 w-full">
+            Selengkapnya
+          </button>
+            </div>
+          </div>
+        ))}
           </div>
         </div>
-        </section>
+      </section>
         
       {/* Map Section */}
       <section className="bg-teal-800 text-white py-16">
