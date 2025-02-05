@@ -1,75 +1,13 @@
-// app/page.js
+import Kegiatan from '@/components/Kegiatan/kegiatan'
+import Navbar from '@/components/navbar/navbar'
 import Image from 'next/image'
 import Link from 'next/link'
 
 export default function Home() {
-  const activities = [
-    {
-      title: 'VOSCOM',
-      description: 'Telah mengikuti ajang kompetisi bergengsi Virtual Scout Competition (VOSCOM) 2023',
-      image: '/kegiatan-photo/voscom-png.png',
-    },
-    {
-      title: 'Diklatdas',
-      description: 'Merupakan kegiatan yang wajib diikuti anggota dari KSR untuk mendapatkan dan tahap mendelegasikan unit KSR',
-      image: '/kegiatan-photo/Diklat-png.png',
-    },
-    {
-      title: 'Donor Darah',
-      description: 'Donor darah merupakan kegiatan rutin yang dilaksanakan setiap kegiatan unit memberikan bantuan darah',
-      image: '/kegiatan-photo/Donor-png.png',
-    },
-    {
-      title: 'MOCA',
-      description: 'Mountain Camping merupakan kegiatan rutin unit dalam memberikan bantuan pengambilan atau pemberian ilmu di dataran tinggi',
-      image: '/kegiatan-photo/Moca-png.png',
-    },
-  ]
 
   return (
     <main className="min-h-screen">
-      {/* Navigation */}
-      <nav className="bg-teal-800 p-3 fixed w-full top-0 z-50 shadow-md px-8">
-      <div className="container mx-auto flex flex-wrap justify-between items-center">
-        <Image src="/images/logo/Logo KSR 2.png" alt="Logo" width={70} height={70} />
-        
-        {/* Mobile menu button */}
-        <button className="md:hidden text-white hover:text-yellow-300">
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-16 6h16" />
-        </svg>
-        </button>
-
-        {/* Navigation Links */}
-        <div className="hidden md:flex flex-grow justify-center space-x-8 text-white">
-        <Link href="/" className="hover:text-yellow-300">Beranda</Link>
-        <Link href="#" className="hover:text-yellow-300">Kegiatan</Link>
-        <Link href="#" className="hover:text-yellow-300">Anggota</Link>
-        <Link href="#" className="hover:text-yellow-300">Lokasi</Link>
-        <Link href="#" className="hover:text-yellow-300">Kontak</Link>
-        <Link href="#" className="hover:text-yellow-300">Galeri</Link>
-        </div>
-
-        {/* Sign up button */}
-        <div className="hidden md:flex">
-        <Link href="#" className="bg-white text-teal-800 px-4 py-2 rounded-md hover:bg-gray-200">Sign up</Link>
-        </div>
-
-        {/* Mobile menu (hidden by default) */}
-        <div className="md:hidden w-full mt-4 hidden">
-        <div className="flex flex-col space-y-4 text-white">
-          <Link href="/" className="hover:text-yellow-300">Beranda</Link>
-          <Link href="#" className="hover:text-yellow-300">Kegiatan</Link>
-          <Link href="#" className="hover:text-yellow-300">Anggota</Link>
-          <Link href="#" className="hover:text-yellow-300">Lokasi</Link>
-          <Link href="#" className="hover:text-yellow-300">Kontak</Link>
-          <Link href="#" className="hover:text-yellow-300">Galeri</Link>
-          <Link href="#" className="bg-white text-teal-800 px-4 py-2 rounded-md hover:bg-gray-200 text-center">Sign up</Link>
-        </div>
-        </div>
-      </div>
-      </nav>
-
+      <Navbar />
 
       {/* Hero Section */}
       <section className="container mx-auto py-10 px-10 md:px-30 flex flex-col md:flex-row items-center justify-between mt-20 mb-10 md:mb-30">
@@ -85,8 +23,8 @@ export default function Home() {
         Kontak Kami
           </button>
         </div>
-        <div className="md:w-1/2 hidden md:block w-full h-auto relative aspect-w-16 aspect-h-9 pl-8">
-          <Image src="/images/logo/Logo KSR 2.png" alt="KSR Logo" width={200} height={200} layout='responsive' className="max-w-full h-auto"/>
+        <div className="md:w-1/2 hidden md:block w-full h-auto relative pl-8">
+          <Image src="/images/logo/Logo KSR 2.png" alt="KSR Logo" width={200} height={200} style={{width: '100%', height: 'auto'}} className="max-w-full"/>
         </div>
       </section>
       {/* Circle Section */}
@@ -133,28 +71,7 @@ export default function Home() {
       </section>
 
       {/* Activities Section */}
-      <section className="py-15">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-2 text-black">KEGIATAN</h2>
-          <h2 className="text-2xl text-center mb-10 text-black">KSR ITB STIKOM Bali</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {activities.map((activity) => (
-          <div key={activity.title} className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full">
-            <Image src={activity.image} alt={activity.title} width={300} height={200} className="w-full h-48 object-cover" />
-            <div className="p-4 flex flex-col flex-grow">
-          <div className="flex-grow">
-            <h3 className="font-bold text-black text-xl mb-2">{activity.title}</h3>
-            <p className="text-black text-sm">{activity.description}</p>
-          </div>
-          <button className="mt-4 bg-teal-800 text-white px-4 py-2 rounded-md hover:bg-teal-700 w-full">
-            Selengkapnya
-          </button>
-            </div>
-          </div>
-        ))}
-          </div>
-        </div>
-      </section>
+     <Kegiatan />
         
       {/* Map Section */}
       <section className="bg-teal-800 text-white py-16">
