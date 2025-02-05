@@ -27,6 +27,7 @@ export default function Home() {
           <Image src="/images/logo/Logo KSR 2.png" alt="KSR Logo" width={200} height={200} style={{width: '100%', height: 'auto'}} className="max-w-full"/>
         </div>
       </section>
+
       {/* Circle Section */}
       <div className="relative w-full">
         <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2">
@@ -41,6 +42,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      
       {/* Video Section */}
       <section className="bg-teal-50/80 py-30"> {/* Changed from bg-gray-100 to bg-teal-50/80 */}
         <div className="container mx-auto px-4">
@@ -62,9 +64,10 @@ export default function Home() {
           <p className="text-black text-justify pb-4">
           KSR ITB STIKOM Bali adalah singkatan dari Korps Sukarela Palang Merah Indonesia Unit Institut Teknologi dan Bisnis STIKOM Bali. Ini adalah sebuah Unit Kegiatan Mahasiswa (UKM) di ITB STIKOM Bali yang bergerak di bidang kepalangmerahan. KSR ITB STIKOM Bali merupakan wadah bagi mahasiswa yang ingin mengembangkan jiwa sosial dan kemanusiaan, serta  mengaktualisasikan Tri Dharma Perguruan Tinggi, khususnya dalam pengabdian kepada masyarakat.
           DAFTAR SEKARANG !          </p>
+           <Link href="/Qr-pendaftaran">
           <button className="bg-teal-800 text-white px-6 py-2 rounded-md hover:bg-teal-700">
            Daftar Sekarang
-          </button>
+          </button></Link>
         </div>
           </div>
         </div>
@@ -190,7 +193,7 @@ export default function Home() {
             <div>
               <h4 className="font-bold mb-4">Social Media</h4>
               <div className="flex space-x-4">
-                <a href="https://www.instagram.com/ksr_itbstikombali/" 
+                <a href="https://www.instagram.com/ksr.stikombali/?hl=en" 
                    target="_blank" 
                    rel="noopener noreferrer" 
                    className="hover:opacity-75 transition-opacity duration-300">
