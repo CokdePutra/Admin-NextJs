@@ -14,13 +14,13 @@ export default function Home() {
       {/* navbar */}
       <Navbar />
 
-      {/* Hero Section */}
+      {/* Beranda Section */}
       <Beranda />
 
       {/* Circle Section */}
       <Circlepmi />
       
-      {/* Video Section */}
+      {/* Tentangkami Section */}
       <Tentangkami />
 
       {/* Activities Section */}
