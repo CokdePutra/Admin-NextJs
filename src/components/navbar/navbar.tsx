@@ -23,11 +23,11 @@ export default function Navbar() {
         {/* Navigation Links - Desktop */}
         <div className="hidden md:flex flex-grow justify-center space-x-8 text-white">
           <Link href="/" className="hover:text-yellow-300">Beranda</Link>
-          <Link href="/#Tentang Kami" className="hover:text-yellow-300">Tentang Kami</Link>
-          <Link href="/#Kegiatan" className="hover:text-yellow-300">Kegiatan</Link>
-          <Link href="#" className="hover:text-yellow-300">Anggota</Link>
-          <Link href="#" className="hover:text-yellow-300">Lokasi</Link>
-          <Link href="#" className="hover:text-yellow-300">Kontak</Link>
+          <Link href="/#section-tentang-kami" className="hover:text-yellow-300">Tentang Kami</Link>
+          <Link href="/#section-kegiatan" className="hover:text-yellow-300">Kegiatan</Link>
+          <Link href="/#section-kegiatan" className="hover:text-yellow-300">Anggota</Link>
+          <Link href="/#section-map" className="hover:text-yellow-300">Lokasi</Link>
+          <Link href="/#section-kontak" className="hover:text-yellow-300">Kontak</Link>
         </div>
 
         {/* Sign up button - Desktop */}
@@ -41,12 +41,12 @@ export default function Navbar() {
         {isOpen && (
           <div className="md:hidden flex flex-col space-y-4 text-white mt-4 w-full">
             <Link href="/" className="hover:text-yellow-300">Beranda</Link>
-            <Link href="#" className="hover:text-yellow-300">Tentang Kami</Link>
-            <Link href="#" className="hover:text-yellow-300">Kegiatan</Link>
+            <Link href="/#section-tentang-kami" className="hover:text-yellow-300">Tentang Kami</Link>
+            <Link href="/#section-kegiatan" className="hover:text-yellow-300">Kegiatan</Link>
             <Link href="#" className="hover:text-yellow-300">Anggota</Link>
-            <Link href="#" className="hover:text-yellow-300">Lokasi</Link>
-            <Link href="#" className="hover:text-yellow-300">Kontak</Link>
-            <Link href="#" className="bg-white text-teal-800 px-4 py-2 rounded-md hover:bg-gray-200 text-center">
+            <Link href="/#section-map" className="hover:text-yellow-300">Lokasi</Link>
+            <Link href="/#section-kontak" className="hover:text-yellow-300">Kontak</Link>
+            <Link href="/auth/signin" className="bg-white text-teal-800 px-4 py-2 rounded-md hover:bg-gray-200 text-center">
               Sign In
             </Link>
           </div>

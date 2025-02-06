@@ -35,7 +35,7 @@ import axios from 'axios';
 
 const Kegiatan: React.FC = () => {
     return (
-        <section className="py-15">
+        <section className="py-20" id="section-kegiatan">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-2 text-black">KEGIATAN</h2>
           <h2 className="text-2xl text-center mb-10 text-black">KSR ITB STIKOM Bali</h2>
