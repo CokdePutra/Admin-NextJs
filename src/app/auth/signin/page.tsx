@@ -20,16 +20,28 @@ export default function SignIn() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            console.log('Login attempt with:', { email: formData.email });
+            
+            // Ensure a slash between the API URL and the route
             const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, formData);
             
+            console.log('Login response:', res.data);
+
             if (res.data.token) {
                 localStorage.setItem('token', res.data.token);
-                router.push('/dashboard');
+                localStorage.setItem('userData', JSON.stringify(res.data.user));
+                
+                const userLevel = res.data.user.level_user;
+                router.push(userLevel === 'admin' ? '/dashboard/admin' : '/dashboard');
             } else {
-                setError('Invalid response from server');
+                setError('Login gagal: Token tidak ditemukan');
             }
         } catch (error: any) {
-            setError(error.response?.data?.message || 'Login failed');
+            console.error('Login error:', error.response || error);
+            setError(
+                error.response?.data?.message || 
+                'Server error, silahkan coba lagi nanti'
+            );
         }
     };
 

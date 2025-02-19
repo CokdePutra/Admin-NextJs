@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
+import bcrypt from 'bcryptjs';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import ButtonDefault from '@/components/Buttons/ButtonDefault';
@@ -33,20 +34,34 @@ export default function SignUp() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users`, formData);
+            console.log('Signup attempt:', formData);
+            
+            // Hash the password before sending it to the server
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(formData.password, salt);
+
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}users`, {
+                ...formData,
+                password: hashedPassword,
+            });
+
             setSuccess('Account created successfully!');
             setError(null);
 
-            // Auto-login after successful signup
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
+            // Use environment variable for login API URL
+            const loginRes = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}users/login`, {
                 email: formData.email,
-                password: formData.password
+                password: formData.password,
             });
 
-            // Redirect to the dashboard or home page after login
-            router.push('/dashboard');
-        } catch (error) {
-            setError('Failed to create account. Please try again.');
+            if (loginRes.data.token) {
+                localStorage.setItem('token', loginRes.data.token);
+                localStorage.setItem('userData', JSON.stringify(loginRes.data.user));
+                router.push('/dashboard');
+            }
+        } catch (error: any) {
+            console.error('Signup error:', error);
+            setError(error.response?.data?.message || 'Failed to create account. Please try again.');
             setSuccess(null);
         }
     };
@@ -151,7 +166,7 @@ export default function SignUp() {
                 {error && <p className="text-red-500 text-center mt-4">{error}</p>}
                 {success && <p className="text-green-500 text-center mt-4">{success}</p>}
 
-                <button 
+                {/* <button 
                     className="w-full mt-4 flex items-center justify-center border border-gray-300 py-3 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
                     <Image 
@@ -162,7 +177,7 @@ export default function SignUp() {
                         className="mr-2"
                     />
                     Daftar dengan Google
-                </button>
+                </button> */}
 
                 <p className="text-center mt-4 text-gray-600">
                     Sudah Punya Akun? <a href="./signin" className="text-green-600 hover:underline">Masuk</a>
