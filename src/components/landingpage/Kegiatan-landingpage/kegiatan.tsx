@@ -17,7 +17,7 @@ import axios from 'axios';
           image: '/kegiatan-photo/Diklat-png.png',
         },
         {
-          title: 'Donor Darah',
+          title: 'DonorDarah',
           description: 'Donor darah merupakan kegiatan rutin yang dilaksanakan setiap kegiatan unit memberikan bantuan darah',
           image: '/kegiatan-photo/Donor-png.png',
         },

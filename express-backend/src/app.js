@@ -2,7 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const mysql = require("mysql2");
 const cors = require("cors");
-const userRoutes = require("./routes/userRoutes");
+const authMiddleware = require("./middleware/middleware");
 
 dotenv.config();
 
@@ -32,9 +32,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes
-const routes = require("./routes");
-app.use("/api", routes);
+// Protected Routes (require authentication)
+app.use("/api/events", authMiddleware, require("./routes/eventRoutes"));
+
+// Public Routes (no authentication required)
+app.use("/api/users", require("./routes/userRoutes"));
 
 // Start server
 const PORT = process.env.PORT || 4000;
