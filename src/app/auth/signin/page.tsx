@@ -78,6 +78,10 @@ export default function SignIn() {
                 </form>
                 
                 {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+
+                <p className="text-center mt-4 text-gray-600">
+                    Belum Punya Akun? <a href="./signup" className="text-green-600 hover:underline">Buat</a>
+                </p>
             </div>
         </div>
     );

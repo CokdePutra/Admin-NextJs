@@ -3,39 +3,22 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 
-// Middleware untuk autentikasi JWT
-const authenticateToken = (req, res, next) => {
-  const token = req.headers["authorization"];
-  if (!token) return res.status(403).json({ message: "Access denied" });
-
-  jwt.verify(token.split(" ")[1], process.env.JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ message: "Invalid token" });
-    req.user = user;
-    next();
-  });
-};
-
-// Get all users (Protected)
-router.get("/", authenticateToken, async (req, res) => {
+// Get all users
+router.get("/", async (req, res) => {
   try {
-    const [rows] = await req.db
-      .promise()
-      .query("SELECT id_user, email, nama, nim, no_telp FROM tb_user");
+    const [rows] = await req.db.promise().query("SELECT * FROM tb_user");
     res.json(rows);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// Get user by ID (Protected)
-router.get("/:id", authenticateToken, async (req, res) => {
+// Get user by ID
+router.get("/:id", async (req, res) => {
   try {
     const [rows] = await req.db
       .promise()
-      .query(
-        "SELECT id_user, email, nama, nim, no_telp FROM tb_user WHERE id_user = ?",
-        [req.params.id],
-      );
+      .query("SELECT * FROM tb_user WHERE id_user = ?", [req.params.id]);
     if (rows.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -45,7 +28,7 @@ router.get("/:id", authenticateToken, async (req, res) => {
   }
 });
 
-// Create user (Signup)
+// Create user (Signup with hashed password)
 router.post("/", async (req, res) => {
   const {
     email,
@@ -59,7 +42,8 @@ router.post("/", async (req, res) => {
     level_user,
   } = req.body;
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
     const [result] = await req.db
       .promise()
       .query(
@@ -76,13 +60,9 @@ router.post("/", async (req, res) => {
           level_user,
         ],
       );
-    res.status(201).json({
-      id_user: result.insertId,
-      email,
-      nama,
-      nim,
-      no_telp,
-    });
+    res
+      .status(201)
+      .json({ id_user: result.insertId, email, nama, nim, no_telp });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -92,46 +72,29 @@ router.post("/", async (req, res) => {
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
-    console.log("Login attempt for email:", email); // Debug log
-
     const [rows] = await req.db
       .promise()
       .query("SELECT * FROM tb_user WHERE email = ?", [email]);
 
     if (rows.length === 0) {
-      console.log("User not found"); // Debug log
-      return res.status(401).json({ message: "Email atau password salah" });
+      return res.status(401).json({ message: "Invalid email or password" });
     }
 
     const user = rows[0];
-    console.log("Found user:", { id: user.id_user, email: user.email }); // Debug log
-
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log("Password match:", isMatch); // Debug log
 
     if (!isMatch) {
-      return res.status(401).json({ message: "Email atau password salah" });
+      return res.status(401).json({ message: "Invalid email or password" });
     }
 
     const token = jwt.sign(
       { id: user.id_user, email: user.email },
-      process.env.JWT_SECRET,
+      "your_secret_key",
       { expiresIn: "1h" },
     );
-
-    res.json({
-      message: "Login berhasil",
-      token,
-      user: {
-        id: user.id_user,
-        email: user.email,
-        nama: user.nama,
-        level_user: user.level_user,
-      },
-    });
+    res.json({ message: "Login successful", token });
   } catch (error) {
-    console.error("Login error:", error); // Debug log
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: error.message });
   }
 });
 

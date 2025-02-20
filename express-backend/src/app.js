@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const mysql = require("mysql2");
 const cors = require("cors");
 const authMiddleware = require("./middleware/middleware");
+require("dotenv").config();
 
 dotenv.config();
 
@@ -12,9 +13,10 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:3000", // Update this to your frontend domain in production
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 
@@ -32,11 +34,33 @@ app.use((req, res, next) => {
   next();
 });
 
-// Protected Routes (require authentication)
-app.use("/api/events", authMiddleware, require("./routes/eventRoutes"));
+// Protected Routes with proper auth middleware
+app.use("/api/dashboard", authMiddleware, (req, res, next) => {
+  if (req.user.level_user !== "admin") {
+    return res.status(403).json({ message: "Access denied: Admin only" });
+  }
+  next();
+});
 
-// Public Routes (no authentication required)
-app.use("/api/users", require("./routes/userRoutes"));
+// Protected Routes
+const userRoutes = require("./routes/userRoutes");
+const eventRoutes = require("./routes/eventRoutes");
+
+app.use("/api/users", authMiddleware, userRoutes);
+app.use("/api/events", authMiddleware, eventRoutes);
+
+// Public Routes
+app.use("/api/auth", userRoutes); // Login and register routes
+
+// Error handlingS
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Something broke!" });
+});
+
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
 
 // Start server
 const PORT = process.env.PORT || 4000;

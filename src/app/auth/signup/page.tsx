@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
-import bcrypt from 'bcryptjs';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import ButtonDefault from '@/components/Buttons/ButtonDefault';
@@ -36,20 +35,14 @@ export default function SignUp() {
         try {
             console.log('Signup attempt:', formData);
             
-            // Hash the password before sending it to the server
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(formData.password, salt);
-
-            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}users`, {
-                ...formData,
-                password: hashedPassword,
-            });
+            // Send plain password to server
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users`, formData);
 
             setSuccess('Account created successfully!');
             setError(null);
 
-            // Use environment variable for login API URL
-            const loginRes = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}users/login`, {
+            // Login with plain password
+            const loginRes = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
                 email: formData.email,
                 password: formData.password,
             });
