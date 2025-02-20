@@ -34,6 +34,14 @@ app.use((req, res, next) => {
   next();
 });
 
+// Import routes
+const userRoutes = require("./routes/userRoutes");
+const eventRoutes = require("./routes/eventRoutes");
+
+// Public Routes (no auth required)
+app.post("/api/auth/login", userRoutes);
+app.post("/api/auth/register", userRoutes);
+
 // Protected Routes with proper auth middleware
 app.use("/api/dashboard", authMiddleware, (req, res, next) => {
   if (req.user.level_user !== "admin") {
@@ -43,16 +51,10 @@ app.use("/api/dashboard", authMiddleware, (req, res, next) => {
 });
 
 // Protected Routes
-const userRoutes = require("./routes/userRoutes");
-const eventRoutes = require("./routes/eventRoutes");
-
 app.use("/api/users", authMiddleware, userRoutes);
 app.use("/api/events", authMiddleware, eventRoutes);
 
-// Public Routes
-app.use("/api/auth", userRoutes); // Login and register routes
-
-// Error handlingS
+// Error handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: "Something broke!" });

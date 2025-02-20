@@ -17,32 +17,41 @@ export default function SignIn() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleLogin = async () => {
         try {
-            console.log('Login attempt with:', { email: formData.email });
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_API_URL}/auth/login`, // Updated endpoint
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
             
-            // Ensure a slash between the API URL and the route
-            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, formData);
-            
-            console.log('Login response:', res.data);
-
-            if (res.data.token) {
-                localStorage.setItem('token', res.data.token);
-                localStorage.setItem('userData', JSON.stringify(res.data.user));
+            if (response.data.token) {
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('userData', JSON.stringify(response.data.user));
                 
-                const userLevel = res.data.user.level_user;
-                router.push(userLevel === 'admin' ? '/dashboard/admin' : '/dashboard');
-            } else {
-                setError('Login gagal: Token tidak ditemukan');
+                const userLevel = response.data.user.level_user;
+                if (userLevel === 'admin') {
+                    router.push('/dashboard/admin');
+                } else if (userLevel === 'mahasiswa') {
+                    router.push('/dashboard');
+                }
             }
         } catch (error: any) {
-            console.error('Login error:', error.response || error);
+            console.error('Login error:', error.response?.data || error);
             setError(
                 error.response?.data?.message || 
                 'Server error, silahkan coba lagi nanti'
             );
         }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        handleLogin();
     };
 
     return (

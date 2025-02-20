@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/middleware");
 
-// Protected routes
+// Apply middleware to all routes
 router.use(authMiddleware);
 
-// Get all events
+// Get all events - allow access to all authenticated users
 router.get("/", async (req, res) => {
   try {
     const [rows] = await req.db.promise().query("SELECT * FROM tb_event");
@@ -32,15 +32,21 @@ router.get("/:id", async (req, res) => {
 
 // Create event
 router.post("/", async (req, res) => {
-  const { nama_event, tanggal_event, deskripsi } = req.body;
+  const { nama_event, tanggal, deskripsi, keterangan } = req.body;
   try {
     const [result] = await req.db
       .promise()
       .query(
-        "INSERT INTO tb_event (nama_event, tanggal_event, deskripsi) VALUES (?, ?, ?)",
-        [nama_event, tanggal_event, deskripsi],
+        "INSERT INTO tb_event (nama_event, tanggal, deskripsi, keterangan) VALUES (?, ?, ?, ?)",
+        [nama_event, tanggal, deskripsi, keterangan],
       );
-    res.status(201).json({ id_event: result.insertId, ...req.body });
+    res.status(201).json({
+      id_event: result.insertId,
+      nama_event,
+      tanggal,
+      deskripsi,
+      keterangan,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

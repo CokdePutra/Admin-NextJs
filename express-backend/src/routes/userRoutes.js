@@ -3,6 +3,54 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 
+// Public routes
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log("Login attempt for:", email); // Debug log
+
+    const [users] = await req.db
+      .promise()
+      .query("SELECT * FROM tb_user WHERE email = ?", [email]);
+
+    if (users.length === 0) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const user = users[0];
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const token = jwt.sign(
+      {
+        id: user.id_user,
+        email: user.email,
+        level_user: user.level_user,
+      },
+      process.env.JWT_SECRET || "your_secret_key",
+      { expiresIn: "1h" },
+    );
+
+    res.json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user.id_user,
+        email: user.email,
+        level_user: user.level_user,
+        nama: user.nama,
+      },
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Protected routes below
 // Get all users
 router.get("/", async (req, res) => {
   try {
@@ -63,36 +111,6 @@ router.post("/", async (req, res) => {
     res
       .status(201)
       .json({ id_user: result.insertId, email, nama, nim, no_telp });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// User login
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const [rows] = await req.db
-      .promise()
-      .query("SELECT * FROM tb_user WHERE email = ?", [email]);
-
-    if (rows.length === 0) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
-
-    const user = rows[0];
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
-
-    const token = jwt.sign(
-      { id: user.id_user, email: user.email },
-      "your_secret_key",
-      { expiresIn: "1h" },
-    );
-    res.json({ message: "Login successful", token });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
