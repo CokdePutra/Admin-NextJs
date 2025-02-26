@@ -40,10 +40,10 @@ const menuGroups = [
           </svg>
         ),
         label: "Dashboard",
-        route: "/",
+        route: "/admin/dashboard",
         children: [
-          { label: "Users", route: "/" },
-          { label: "Events", route: "/events" },
+          { label: "Users", route: "/admin/dashboard/users" },
+          { label: "Events", route: "/admin/dashboard/events" },
         ],
       },
       {
