@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "@/utils/auth"; // Import middleware
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import TableUsers from "@/components/Tables/TableUsers";
 import ButtonDefault from "@/components/Buttons/ButtonDefault";
@@ -10,8 +11,8 @@ import axios from "axios";
 
 // Create API instance
 const api = axios.create({
-  baseURL: 'http://localhost:4000/api',
-  withCredentials: true
+  baseURL: "http://localhost:4000/api",
+  withCredentials: true,
 });
 
 interface User {
@@ -28,21 +29,25 @@ interface User {
 }
 
 const Home = () => {
+  const { isAuthenticated, loading } = useAuth(); // Gunakan middleware auth
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+  if (loading) return <p>Loading...</p>; // Tampilkan loading saat verifikasi
+  if (!isAuthenticated) return null; // Jika tidak terautentikasi, jangan render halaman
 
   const handleAddUser = async (email: string, password: string, name: string, nim: string, no_telp: string, golongan_darah: string, tanggal_lahir: string, alamat: string, level_user: string) => {
     try {
       const response = await api.post("/users", {
-        email: email,
-        password: password,
+        email,
+        password,
         nama: name,
-        nim: nim,
-        no_telp: no_telp,
-        golongan_darah: golongan_darah,
-        tanggal_lahir: tanggal_lahir,
-        alamat: alamat,
-        level_user: level_user,
+        nim,
+        no_telp,
+        golongan_darah,
+        tanggal_lahir,
+        alamat,
+        level_user,
       });
       console.log("User added:", response.data);
       setShowModal(false);
@@ -52,41 +57,9 @@ const Home = () => {
     }
   };
 
-  const handleEditUser = async (id: number, email: string, password: string, name: string, nim: string, no_telp: string, golongan_darah: string, tanggal_lahir: string, alamat: string, level_user: string) => {
-    try {
-      const response = await api.put(`/users/${id}`, {
-        email: email,
-        password: password,
-        nama: name,
-        nim: nim,
-        no_telp: no_telp,
-        golongan_darah: golongan_darah,
-        tanggal_lahir: tanggal_lahir,
-        alamat: alamat,
-        level_user: level_user,
-      });
-      console.log("User updated:", response.data);
-      setShowModal(false);
-      window.location.reload(); // Refresh the page to show updated data
-    } catch (error) {
-      console.error("Failed to update user:", error);
-    }
-  };
-
-  const handleDeleteUser = async (id: number) => {
-    try {
-      await api.delete(`/users/${id}`);
-      console.log("User deleted:", id);
-      window.location.reload(); // Refresh the page to show updated data
-    } catch (error) {
-      console.error("Failed to delete user:", error);
-    }
-  };
-
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Users" />
-
       <div className="flex flex-col gap-10">
         <div className="w-[20rem]">
           <ButtonDefault
@@ -98,22 +71,15 @@ const Home = () => {
             }}
           />
         </div>
-        <TableUsers 
+        <TableUsers
           onEditUser={(user: User) => {
             setSelectedUser(user);
             setShowModal(true);
-          }} 
-          onDeleteUser={handleDeleteUser} 
+          }}
+          onDeleteUser={() => {}}
         />
       </div>
-
-      <ModalTambahUser
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        onAddUser={handleAddUser}
-        onEditUser={handleEditUser}
-        user={selectedUser}
-      />
+      <ModalTambahUser show={showModal} onClose={() => setShowModal(false)} onAddUser={handleAddUser} onEditUser={() => {}} user={selectedUser} />
     </DefaultLayout>
   );
 };

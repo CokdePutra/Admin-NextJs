@@ -1,5 +1,11 @@
 const express = require("express");
 const router = express.Router();
+const authMiddleware = require("../middleware/auth");
+
+// Protected route example
+router.get("/protected", authMiddleware, (req, res) => {
+  res.json({ message: "Anda berhasil mengakses halaman ini", user: req.user });
+});
 
 // Get all users
 router.get("/", async (req, res) => {
@@ -26,42 +32,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Create user
-router.post("/", async (req, res) => {
-  const {
-    email,
-    password,
-    nama,
-    nim,
-    no_telp,
-    golongan_darah,
-    tanggal_lahir,
-    alamat,
-    level_user,
-  } = req.body;
-  try {
-    const [result] = await req.db
-      .promise()
-      .query(
-        "INSERT INTO tb_user (email, password, nama, nim, no_telp, golongan_darah, tanggal_lahir, alamat, level_user) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [
-          email,
-          password,
-          nama,
-          nim,
-          no_telp,
-          golongan_darah,
-          tanggal_lahir,
-          alamat,
-          level_user,
-        ],
-      );
-    res.status(201).json({ id_user: result.insertId, ...req.body });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
 // Update user
 router.put("/:id", async (req, res) => {
   const {
@@ -76,13 +46,16 @@ router.put("/:id", async (req, res) => {
     level_user,
   } = req.body;
   try {
+    const hashedPassword = password
+      ? await bcrypt.hash(password, 10)
+      : undefined;
     const [result] = await req.db
       .promise()
       .query(
         "UPDATE tb_user SET email = ?, password = ?, nama = ?, nim = ?, no_telp = ?, golongan_darah = ?, tanggal_lahir = ?, alamat = ?, level_user = ? WHERE id_user = ?",
         [
           email,
-          password,
+          hashedPassword,
           nama,
           nim,
           no_telp,
