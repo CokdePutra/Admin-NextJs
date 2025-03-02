@@ -34,8 +34,12 @@ export default function SignIn() {
                 formData,
                 { headers: { 'Content-Type': 'application/json' } }
             );
+            
+            console.log("Respons dari server:", response.data); // Debugging
 
-            const { token, user } = response.data;
+            // const { token, user } = response.data;
+            const token = response.data?.token;  // Cek apakah `token` ada
+            const user = response.data?.user;    // Cek apakah `user` ada
 
             if (!token || !user) {
                 throw new Error("Login gagal, data tidak lengkap");

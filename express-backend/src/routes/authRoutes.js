@@ -5,11 +5,24 @@ const authMiddleware = require("../middleware/auth"); // ✅ Perbaikan path
 const router = express.Router();
 
 // ✅ Middleware untuk mendapatkan user yang sedang login
-router.get("/me", authMiddleware, (req, res) => {
+router.get("/me", (req, res) => {
+  const authHeader = req.headers.authorization;
+  console.log("Auth Header:", authHeader); // Debugging
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Token tidak ditemukan" });
+  }
+
+  const token = authHeader.split(" ")[1];
+  console.log("Token Diterima:", token); // Debugging
+
   try {
-    res.json({ user: req.user });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("Token Terdecode:", decoded); // Debugging
+    res.json({ user: decoded });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Token tidak valid:", error);
+    res.status(401).json({ message: "Token tidak valid" });
   }
 });
 
@@ -71,6 +84,8 @@ router.post("/login", async (req, res) => {
   }
 
   try {
+    console.log("Data login diterima:", email, password); // Debugging
+
     const [users] = await req.db
       .promise()
       .query("SELECT * FROM tb_user WHERE email = ?", [email]);
@@ -86,23 +101,34 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Email atau Password salah" });
     }
 
+    console.log("JWT_SECRET:", process.env.JWT_SECRET);
     const token = jwt.sign(
       { id_user: user.id_user, level_user: user.level_user },
       process.env.JWT_SECRET,
       { expiresIn: "1h" },
     );
 
-    // ✅ Gunakan cookie agar lebih aman
+    console.log("Token yang dihasilkan:", token); // Debugging
     res.cookie("token", token, {
-      httpOnly: true, // Mencegah akses dari JavaScript
-      secure: process.env.NODE_ENV === "production", // Aktifkan hanya di HTTPS
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
     });
 
-    res.json({ message: "Login berhasil", user });
+    res.json({ message: "Login berhasil", token, user });
   } catch (error) {
+    console.error("Login error:", error);
     res.status(500).json({ message: "Terjadi kesalahan saat login" });
   }
+});
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+  });
+  res.json({ message: "Logout berhasil" });
 });
 
 module.exports = router;

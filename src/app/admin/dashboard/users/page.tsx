@@ -29,12 +29,15 @@ interface User {
 }
 
 const Home = () => {
-  const { isAuthenticated, loading } = useAuth(); // Gunakan middleware auth
+  const { isAuthenticated, loading, user } = useAuth(); // Gunakan middleware auth
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   if (loading) return <p>Loading...</p>; // Tampilkan loading saat verifikasi
-  if (!isAuthenticated) return null; // Jika tidak terautentikasi, jangan render halaman
+ // Pastikan user tidak null sebelum mengecek level_user
+if (!isAuthenticated || user?.level_user !== "admin") {
+  return <p>Akses ditolak. Halaman ini hanya untuk Admin.</p>;
+}
 
   const handleAddUser = async (email: string, password: string, name: string, nim: string, no_telp: string, golongan_darah: string, tanggal_lahir: string, alamat: string, level_user: string) => {
     try {

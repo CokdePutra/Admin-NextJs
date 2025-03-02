@@ -9,12 +9,15 @@ import ModalTambahData from "@/components/Modal/ModalTambahData";
 import DefaultLayout from "@/components/Layouts/DefaultLayout"; // Corrected import path
 
 const ListEvent = () => {
-  const { isAuthenticated, loading } = useAuth(); // Gunakan middleware auth
+  const { isAuthenticated, loading, user } = useAuth(); // Gunakan middleware auth
   const [showModal, setShowModal] = useState(false);
   const eventCardRef = useRef<{ handleAddEvent: (name: string, date: string, description: string, keterangan: string) => void }>(null);
 
   if (loading) return <p>Loading...</p>; // Tampilkan loading saat verifikasi
-  if (!isAuthenticated) return null; // Jika tidak terautentikasi, jangan render halaman
+ // Pastikan user tidak null sebelum mengecek level_user
+ if (!isAuthenticated || user?.level_user !== "admin") {
+  return <p>Akses ditolak. Halaman ini hanya untuk Admin.</p>;
+}
 
   const handleAddEvent = (name: string, date: string, description: string) => { // Corrected function signature
     if (eventCardRef.current) {

@@ -2,7 +2,6 @@ const express = require("express");
 const dotenv = require("dotenv");
 const mysql = require("mysql2");
 const cors = require("cors");
-const userRoutes = require("./routes/userRoutes");
 
 dotenv.config();
 
@@ -16,6 +15,13 @@ app.use(
     credentials: true,
   }),
 );
+
+// 🔥 Debugging untuk memastikan CORS berjalan
+app.use((req, res, next) => {
+  console.log("Request dari:", req.headers.origin);
+  console.log("Headers:", req.headers);
+  next();
+});
 
 // Database connection
 const db = mysql.createConnection({
