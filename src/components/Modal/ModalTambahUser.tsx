@@ -48,12 +48,34 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
 
   const handleSaveUser = () => {
     if (user && user.id_user) {
-      onEditUser(user.id_user, userEmail, userPassword, userName, userNim, userNoTelp, userGolonganDarah, userTanggalLahir, userAlamat, userlevel_user);
+      onEditUser(
+        user.id_user,
+        userEmail,
+        userPassword,
+        userName,
+        userNim,
+        userNoTelp,
+        userGolonganDarah,
+        userTanggalLahir,
+        userAlamat,
+        userlevel_user
+      );
     } else {
-      onAddUser(userEmail,userPassword, userName, userNim, userNoTelp, userGolonganDarah, userTanggalLahir, userAlamat, userlevel_user);
+      onAddUser(
+        userEmail,
+        userPassword,
+        userName,
+        userNim,
+        userNoTelp,
+        userGolonganDarah,
+        userTanggalLahir,
+        userAlamat,
+        userlevel_user
+      );
     }
     onClose();
   };
+  
 
   if (!show) return null;
 
