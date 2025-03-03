@@ -1,6 +1,6 @@
-"use client"; // Tambahkan ini!
+"use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useAuth } from "@/utils/auth";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import TableUsers from "@/components/Tables/TableUsers";
@@ -9,7 +9,6 @@ import ModalTambahUser from "@/components/Modal/ModalTambahUser";
 import AlertSuccess from "@/components/Alerts/AlertSuccess";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import axios from "axios";
-
 
 const api = axios.create({
   baseURL: "http://localhost:4000/api",
@@ -36,11 +35,15 @@ const Home = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
+  // Gunakan useRef untuk mereferensikan fungsi fetchUsers di TableUsers
+  const tableUsersRef = useRef<{ fetchUsers: () => void } | null>(null);
+
   if (loading) return <p>Loading...</p>;
   if (!isAuthenticated || user?.level_user !== "admin") {
     return <p>Akses ditolak. Halaman ini hanya untuk Admin.</p>;
   }
 
+  // Fungsi menambah user
   const handleAddUser = async (
     email: string,
     password: string,
@@ -53,7 +56,7 @@ const Home = () => {
     level_user: string
   ) => {
     try {
-      const response = await api.post("/auth/register", {
+      await api.post("/auth/register", {
         email,
         password,
         nama: name,
@@ -65,13 +68,33 @@ const Home = () => {
         level_user,
       });
 
-      console.log("User added:", response.data);
       setAlertMessage("User berhasil ditambahkan!");
       setShowAlert(true);
       setShowModal(false);
-      setTimeout(() => setShowAlert(false), 3000); // Auto-hide alert
+      setTimeout(() => setShowAlert(false), 3000);
+
+      // Refresh data setelah tambah user
+      tableUsersRef.current?.fetchUsers();
     } catch (error) {
-      console.error("Failed to add user:", error);
+      console.error("Gagal menambahkan user:", error);
+    }
+  };
+
+  // Fungsi menghapus user dengan konfirmasi
+  const handleDeleteUser = async (id: number) => {
+    const confirmDelete = window.confirm("Apakah Anda yakin ingin menghapus data ini?");
+    if (!confirmDelete) return;
+
+    try {
+      await api.delete(`/users/${id}`);
+      setAlertMessage("User berhasil dihapus!");
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000);
+
+      // Refresh data setelah delete
+      tableUsersRef.current?.fetchUsers();
+    } catch (error) {
+      console.error("Gagal menghapus user:", error);
     }
   };
 
@@ -91,11 +114,12 @@ const Home = () => {
           />
         </div>
         <TableUsers
+          ref={tableUsersRef}
           onEditUser={(user: User) => {
             setSelectedUser(user);
             setShowModal(true);
           }}
-          onDeleteUser={() => {}}
+          onDeleteUser={handleDeleteUser}
         />
       </div>
       <ModalTambahUser 
