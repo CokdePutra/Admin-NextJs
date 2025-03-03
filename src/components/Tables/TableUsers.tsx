@@ -4,6 +4,11 @@ import ButtonDefault from "../Buttons/ButtonDefault";
 import { useEffect, useState, forwardRef, useImperativeHandle } from "react";
 import axios from "axios";
 
+const api = axios.create({
+  baseURL: "http://localhost:4000/api",
+  withCredentials: true,
+});
+
 interface User {
   id_user: number;
   email: string;
@@ -22,15 +27,10 @@ interface TableUsersProps {
   onDeleteUser: (id: number) => void;
 }
 
-const api = axios.create({
-  baseURL: "http://localhost:4000/api",
-  withCredentials: true,
-});
-
 // Gunakan `forwardRef` untuk mengekspos fungsi `fetchUsers`
-const TableUsers = forwardRef<{ fetchUsers: () => void }, TableUsersProps>(
-  ({ onEditUser, onDeleteUser }, ref) => {
+const TableUsers = forwardRef<{ fetchUsers: () => void }, TableUsersProps>(({ onEditUser, onDeleteUser }, ref) => {
     const [users, setUsers] = useState<User[]>([]);
+    const [visibleUsers, setVisibleUsers] = useState(10);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -90,7 +90,7 @@ const TableUsers = forwardRef<{ fetchUsers: () => void }, TableUsersProps>(
               </tr>
             </thead>
             <tbody>
-              {users.map((user, index) => (
+            {users.slice(0, visibleUsers).map((user) => (
                 <tr key={user.id_user}>
                   <td className="border-b border-[#eee] px-4 py-4 dark:border-dark-3 xl:pl-7.5">
                     <h5 className="text-dark dark:text-white">{user.nama}</h5>
@@ -133,6 +133,17 @@ const TableUsers = forwardRef<{ fetchUsers: () => void }, TableUsersProps>(
             </tbody>
           </table>
         </div>
+        {/* Tombol Load More */}
+            {visibleUsers < users.length && (
+              <div className="mt-4 text-center">
+                <button 
+                  className="bg-green-500 text-white px-4 py-2 rounded"
+                  onClick={() => setVisibleUsers(visibleUsers + 10)}
+                >
+                  Load More
+                </button>
+              </div>
+            )}
       </div>
     );
   }
