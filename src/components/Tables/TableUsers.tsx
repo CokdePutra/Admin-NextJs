@@ -25,10 +25,11 @@ interface User {
 interface TableUsersProps {
   onEditUser: (user: User) => void;
   onDeleteUser: (id: number) => void;
+  searchQuery?: string; // Add this prop
 }
 
-// Gunakan `forwardRef` untuk mengekspos fungsi `fetchUsers`
-const TableUsers = forwardRef<{ fetchUsers: () => void }, TableUsersProps>(({ onEditUser, onDeleteUser }, ref) => {
+const TableUsers = forwardRef<{ fetchUsers: () => void }, TableUsersProps>(
+  ({ onEditUser, onDeleteUser, searchQuery = "" }, ref) => {
     const [users, setUsers] = useState<User[]>([]);
     const [visibleUsers, setVisibleUsers] = useState(10);
     const [loading, setLoading] = useState(true);
@@ -55,6 +56,13 @@ const TableUsers = forwardRef<{ fetchUsers: () => void }, TableUsersProps>(({ on
     useImperativeHandle(ref, () => ({
       fetchUsers,
     }));
+
+    // Filter users based on search query
+    const filteredUsers = users.filter(user => 
+      Object.values(user).some(value => 
+        String(value).toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
@@ -90,7 +98,7 @@ const TableUsers = forwardRef<{ fetchUsers: () => void }, TableUsersProps>(({ on
               </tr>
             </thead>
             <tbody>
-            {users.slice(0, visibleUsers).map((user) => (
+            {filteredUsers.slice(0, visibleUsers).map((user) => (
                 <tr key={user.id_user}>
                   <td className="border-b border-[#eee] px-4 py-4 dark:border-dark-3 xl:pl-7.5">
                     <h5 className="text-dark dark:text-white">{user.nama}</h5>

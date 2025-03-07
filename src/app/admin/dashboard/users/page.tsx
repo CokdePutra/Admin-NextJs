@@ -35,6 +35,7 @@ const Home = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Gunakan useRef untuk mereferensikan fungsi fetchUsers di TableUsers
   const tableUsersRef = useRef<{ fetchUsers: () => void } | null>(null);
@@ -99,6 +100,10 @@ const Home = () => {
     }
   };
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Users" />
@@ -115,10 +120,11 @@ const Home = () => {
             }}
           />
         </div>
-        <SearchForm />
+        <SearchForm onSearch={handleSearch} />
         </div>
         <TableUsers
           ref={tableUsersRef}
+          searchQuery={searchQuery}
           onEditUser={(user: User) => {
             setSelectedUser(user);
             setShowModal(true);
