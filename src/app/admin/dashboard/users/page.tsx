@@ -9,6 +9,7 @@ import ModalTambahUser from "@/components/Modal/ModalTambahUser";
 import AlertSuccess from "@/components/Alerts/AlertSuccess";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import axios from "axios";
+import SearchForm from "@/components/Header/SearchForm";
 
 const api = axios.create({
   baseURL: "http://localhost:4000/api",
@@ -103,7 +104,8 @@ const Home = () => {
       <Breadcrumb pageName="Users" />
       {showAlert && <AlertSuccess message={alertMessage} onClose={() => setShowAlert(false)} />}
       <div className="flex flex-col gap-10">
-        <div className="w-[20rem]">
+        <div className="flex justify-between items-center">
+        <div className="w-auto">
           <ButtonDefault
             label="Tambah User"
             customClasses="bg-green text-white rounded-[5px] px-10 py-3.5 lg:px-8 xl:px-10"
@@ -112,6 +114,8 @@ const Home = () => {
               setShowModal(true);
             }}
           />
+        </div>
+        <SearchForm />
         </div>
         <TableUsers
           ref={tableUsersRef}
