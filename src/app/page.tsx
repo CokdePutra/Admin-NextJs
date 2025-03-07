@@ -26,7 +26,7 @@ export default function Home() {
           </button>
         </div>
         <div className="md:w-1/2 hidden md:block w-full h-auto relative pl-8">
-          <Image src="/images/logo/Logo KSR 2.png" alt="KSR Logo" width={200} height={200} style={{width: '100%', height: 'auto'}} className="max-w-full"/>
+          <Image src="/images/logo/Logo_KSR_2.png" alt="KSR Logo" width={200} height={200} style={{width: '100%', height: 'auto'}} className="max-w-full"/>
         </div>
       </section>
 
@@ -53,7 +53,7 @@ export default function Home() {
             <div className="relative" style={{paddingBottom: '56.25%'}}>
             <iframe
               className="absolute inset-0 w-full h-full rounded-lg border-4 border-teal-800"
-              src="/video/WhatsApp Video 2024-10-29 at 09.09.57_33f872ce.mp4#t=0.001"
+              src="/video/KSR_vid.mp4#t=0.001"
               title="KSR Video"
               allow="clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
               allowFullScreen
