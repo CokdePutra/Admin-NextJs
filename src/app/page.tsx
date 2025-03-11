@@ -7,7 +7,7 @@ import Link from 'next/link'
 export default function Home() {
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-white">
       {/* navbar */}
       <Navbar />
 
