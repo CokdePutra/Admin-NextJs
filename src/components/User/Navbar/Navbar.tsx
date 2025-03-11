@@ -133,10 +133,7 @@ export default function Navbar() {
             </Link>
 
             {user ? (
-              <Link
-                href="/#section-kontak"
-                className="flex hover:text-yellow-300"
-              >
+              <Link href="/profileUser" className="flex hover:text-yellow-300">
                 <Image
                   src="/images/user/DefaultProfile.jpg" // Ganti dengan gambar profil asli jika ada
                   alt="Profile"

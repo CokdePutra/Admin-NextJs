@@ -1,38 +1,68 @@
+"use client";
 import Navbar from "@/components/User/Navbar/Navbar";
-import React from "react";
-import Head from "next/head";
+import React, { useState } from "react";
 import Image from "next/image";
-import { FaInstagram, FaGithub } from "react-icons/fa";
-import { BiGlobe } from "react-icons/bi";
 import Link from "next/link";
-
+import QRCode from "react-qr-code";
 const Page = () => {
+  const DataUser = [
+    {
+      name: "I Made Kanha Mahesyogi",
+      nim: "230030039",
+      gol_darah: "o",
+      email: "kanhalolok@gmail.com",
+      pass: "lowlock",
+      id: 0,
+    },
+    {
+      name: "Cokorda Gde Putra Widnyana Surya",
+      nim: "230030040",
+      gol_darah: "o",
+      email: "gmoons@gmail.com",
+      pass: "lowlock",
+      id: 1,
+    },
+  ];
+
+  const userQR_Code = DataUser.find((user) => user.id === 1);
+
+  // Encode user data as JSON if user is found
+  const [value] = useState(userQR_Code ? JSON.stringify(userQR_Code) : "");
   return (
     <>
       <Navbar />
       <div className="min-h-screen bg-gray-100 p-4">
-        <Head>
-          <title>Profile Page</title>
-          <meta name="description" content="User profile page" />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-
         <main className="mx-auto mt-20 grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-3">
           {/* Left Panel */}
           <div className="flex h-fit flex-col items-center rounded-lg bg-white p-6 shadow-md md:col-span-1">
-            <div className="relative mb-4 h-40 w-40 overflow-hidden rounded-full">
+            <div className="relative h-40 w-40 overflow-hidden rounded-full">
               <Image
                 src="/images/logo/Logo_KSR_1.png"
                 alt="Profile Picture"
-                layout="fill"
-                objectFit="cover"
+                width={160}
+                height={160}
                 priority
               />
             </div>
 
-            <h1 className="mb-2 text-center text-3xl font-bold">[Your Name]</h1>
+            <h1 className="mb-2 text-center text-3xl font-bold">
+              {userQR_Code?.name}
+            </h1>
             <p className="mb-8 text-center text-gray-500">
               Student/Admin/Worker
+            </p>
+            <div className="mb-4">
+              <QRCode
+                value={value}
+                size={180}
+                level="H"
+                className="mx-auto"
+                fgColor="#000000"
+                bgColor="#ffffff"
+              />
+            </div>
+            <p className="mb-4 text-center text-sm text-gray-500">
+              Scan QR code to view digital profile
             </p>
           </div>
 
@@ -71,11 +101,6 @@ const Page = () => {
                   Tempat, Tanggal Lahir
                 </h2>
                 <p className="text-gray-500">Denpasar, 01 Agustus 2005</p>
-              </div>
-
-              <div>
-                <h2 className="mb-1 text-lg font-medium">Instansi</h2>
-                <p className="text-gray-500">ITB STIKOM BALI</p>
               </div>
 
               <div>
