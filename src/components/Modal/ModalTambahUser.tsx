@@ -35,7 +35,7 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
   useEffect(() => {
     if (user) {
       setUserEmail(user.email || "");
-      setUserPassword(user.password || "");
+      setUserPassword("");
       setUserName(user.nama || "");
       setUserNim(user.nim || "");
       setUserNoTelp(user.no_telp || "");
@@ -43,44 +43,69 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
       setUserTanggalLahir(user.tanggal_lahir || "");
       setUserAlamat(user.alamat || "");
       setUserLevel(user.level_user || "");
+
+          // Konversi format tanggal ke YYYY-MM-DD
+    if (user.tanggal_lahir) {
+      const formattedDate = new Date(user.tanggal_lahir).toISOString().split("T")[0];
+      setUserTanggalLahir(formattedDate);
+    } else {
+      setUserTanggalLahir("");
+    }
+    
+    setUserAlamat(user.alamat || "");
+    setUserLevel(user.level_user || "");
     }
   }, [user]);
 
-  const handleSaveUser = () => {
+  const handleSaveUser = async () => {
+    const userData = {
+      email: userEmail,
+      password: userPassword,
+      nama: userName,
+      nim: userNim,
+      no_telp: userNoTelp,
+      golongan_darah: userGolonganDarah,
+      tanggal_lahir: userTanggalLahir,
+      alamat: userAlamat,
+      level_user: userlevel_user,
+    };
+  
+    console.log("Sending user data:", userData);
+  
     if (user && user.id_user) {
-      onEditUser(
-        user.id_user,
-        userEmail,
-        userPassword,
-        userName,
-        userNim,
-        userNoTelp,
-        userGolonganDarah,
-        userTanggalLahir,
-        userAlamat,
-        userlevel_user
-      );
+      try {
+        const response = await fetch(`/api/users/${user.id_user}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(userData),
+        });
+  
+        const result = await response.json();
+        console.log("Update Response:", result);
+  
+        if (response.ok) {
+          alert("User berhasil diperbarui!");
+        } else {
+          alert("Gagal memperbarui user.");
+        }
+      } catch (error) {
+        console.error("Update Error:", error);
+        alert("Terjadi kesalahan saat update.");
+      }
     } else {
-      onAddUser(
-        userEmail,
-        userPassword,
-        userName,
-        userNim,
-        userNoTelp,
-        userGolonganDarah,
-        userTanggalLahir,
-        userAlamat,
-        userlevel_user
-      );
+      onAddUser(userEmail, userPassword, userName, userNim, userNoTelp, userGolonganDarah, userTanggalLahir, userAlamat, userlevel_user);
     }
+  
     onClose();
   };
   
-
+  
+  
+  
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-999">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-999 w-2/3 m-auto">
       <div className="bg-white p-6 rounded-lg">
         <h2 className="text-2xl font-bold mb-4">{user ? "Edit User" : "Tambah User"}</h2>
         <input
@@ -93,7 +118,7 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
         />
         <input
           type="password"
-          placeholder="Password"
+          placeholder="Password (jangan diisi jika tidak ingin diubah)"
           required
           value={userPassword}
           onChange={(e) => setUserPassword(e.target.value)} // Fixed: was using setUserName
