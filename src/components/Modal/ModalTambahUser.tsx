@@ -32,6 +32,18 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
   const [userAlamat, setUserAlamat] = useState("");
   const [userlevel_user, setUserLevel] = useState("");
 
+  const resetForm = () => {
+    setUserEmail("");
+    setUserPassword("");
+    setUserName("");
+    setUserNim("");
+    setUserNoTelp("");
+    setUserGolonganDarah("");
+    setUserTanggalLahir("");
+    setUserAlamat("");
+    setUserLevel("");
+  };
+
   useEffect(() => {
     if (user) {
       setUserEmail(user.email || "");
@@ -40,22 +52,25 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
       setUserNim(user.nim || "");
       setUserNoTelp(user.no_telp || "");
       setUserGolonganDarah(user.golongan_darah || "");
-      setUserTanggalLahir(user.tanggal_lahir || "");
+
+      if (user.tanggal_lahir) {
+        const formattedDate = new Date(user.tanggal_lahir).toISOString().split("T")[0];
+        setUserTanggalLahir(formattedDate);
+      } else {
+        setUserTanggalLahir("");
+      }
+
       setUserAlamat(user.alamat || "");
       setUserLevel(user.level_user || "");
-
-          // Konversi format tanggal ke YYYY-MM-DD
-    if (user.tanggal_lahir) {
-      const formattedDate = new Date(user.tanggal_lahir).toISOString().split("T")[0];
-      setUserTanggalLahir(formattedDate);
     } else {
-      setUserTanggalLahir("");
+      resetForm();
     }
-    
-    setUserAlamat(user.alamat || "");
-    setUserLevel(user.level_user || "");
-    }
-  }, [user]);
+  }, [user, show]);
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
 
   const handleSaveUser = async () => {
     const userData = {
@@ -69,9 +84,9 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
       alamat: userAlamat,
       level_user: userlevel_user,
     };
-  
+
     console.log("Sending user data:", userData);
-  
+
     if (user && user.id_user) {
       try {
         const response = await fetch(`/api/users/${user.id_user}`, {
@@ -79,10 +94,10 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(userData),
         });
-  
+
         const result = await response.json();
         console.log("Update Response:", result);
-  
+
         if (response.ok) {
           alert("User berhasil diperbarui!");
         } else {
@@ -95,13 +110,10 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
     } else {
       onAddUser(userEmail, userPassword, userName, userNim, userNoTelp, userGolonganDarah, userTanggalLahir, userAlamat, userlevel_user);
     }
-  
+
     onClose();
   };
-  
-  
-  
-  
+
   if (!show) return null;
 
   return (
@@ -113,7 +125,7 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
           placeholder="Email"
           required
           value={userEmail}
-          onChange={(e) => setUserEmail(e.target.value)} // Fixed: was using setUserName
+          onChange={(e) => setUserEmail(e.target.value)}
           className="mb-4 p-2 border rounded w-full"
         />
         <input
@@ -121,7 +133,7 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
           placeholder="Password (jangan diisi jika tidak ingin diubah)"
           required
           value={userPassword}
-          onChange={(e) => setUserPassword(e.target.value)} // Fixed: was using setUserName
+          onChange={(e) => setUserPassword(e.target.value)}
           className="mb-4 p-2 border rounded w-full"
         />
         <input
@@ -178,7 +190,7 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
         </select>
         <div className="flex justify-end">
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="mr-4 px-4 py-2 bg-gray-500 text-white rounded"
           >
             Cancel
