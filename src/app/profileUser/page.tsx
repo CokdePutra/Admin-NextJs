@@ -1,33 +1,62 @@
 "use client";
 import Navbar from "@/components/User/Navbar/Navbar";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import QRCode from "react-qr-code";
+import { useAuth } from "@/utils/auth";
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: "http://localhost:4000/api",
+  withCredentials: true,
+});
+
+interface UserData {
+  id_user: number;
+  email: string;
+  nama: string;
+  nim: string;
+  no_telp: string;
+  golongan_darah: string;
+  tanggal_lahir: string;
+  alamat: string;
+  level_user: string;
+}
+
 const Page = () => {
-  const DataUser = [
-    {
-      name: "I Made Kanha Mahesyogi",
-      nim: "230030039",
-      gol_darah: "o",
-      email: "kanhalolok@gmail.com",
-      pass: "lowlock",
-      id: 0,
-    },
-    {
-      name: "Cokorda Gde Putra Widnyana Surya",
-      nim: "230030040",
-      gol_darah: "o",
-      email: "gmoons@gmail.com",
-      pass: "lowlock",
-      id: 1,
-    },
-  ];
+  const { user } = useAuth();
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const userQR_Code = DataUser.find((user) => user.id === 1);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        if (user?.id_user) {
+          const response = await api.get(`/users/${user.id_user}`);
+          setUserData(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Encode user data as JSON if user is found
-  const [value] = useState(userQR_Code ? JSON.stringify(userQR_Code) : "");
+    fetchUserData();
+  }, [user]);
+
+  const qrValue = userData
+    ? JSON.stringify({
+        nama: userData.nama,
+        nim: userData.nim || "", // Optional NIM
+        email: userData.email,
+      })
+    : "";
+
+  if (loading) return <div>Loading...</div>;
+  if (!userData) return <div>User not found</div>;
+
   return (
     <>
       <Navbar />
@@ -46,14 +75,14 @@ const Page = () => {
             </div>
 
             <h1 className="mb-2 text-center text-3xl font-bold">
-              {userQR_Code?.name}
+              {userData.nama}
             </h1>
             <p className="mb-8 text-center text-gray-500">
-              Student/Admin/Worker
+              {userData.level_user}
             </p>
             <div className="mb-4">
               <QRCode
-                value={value}
+                value={qrValue}
                 size={180}
                 level="H"
                 className="mx-auto"
@@ -71,41 +100,41 @@ const Page = () => {
             <div className="space-y-6">
               <div>
                 <h2 className="mb-1 text-lg font-medium">Nama Lengkap</h2>
-                <p className="text-gray-500">I MADE KANHA MAHESYOGI</p>
+                <p className="text-gray-500">{userData.nama}</p>
               </div>
 
               <div>
                 <h2 className="mb-1 text-lg font-medium">
                   NIM (khusus Mahasiswa Stikom)
                 </h2>
-                <p className="text-gray-500">230030039</p>
+                <p className="text-gray-500">{userData.nim}</p>
               </div>
 
               <div>
                 <h2 className="mb-1 text-lg font-medium">Email</h2>
-                <p className="text-gray-500">kmahesyogi@gmail.com</p>
+                <p className="text-gray-500">{userData.email}</p>
               </div>
 
               <div>
                 <h2 className="mb-1 text-lg font-medium">Alamat Lengkap</h2>
-                <p className="text-gray-500">Jl Soka Gg VI No 42, Tohpati</p>
+                <p className="text-gray-500">{userData.alamat}</p>
               </div>
 
               <div>
                 <h2 className="mb-1 text-lg font-medium">Golongan Darah</h2>
-                <p className="text-gray-500">B</p>
+                <p className="text-gray-500">{userData.golongan_darah}</p>
               </div>
 
               <div>
-                <h2 className="mb-1 text-lg font-medium">
-                  Tempat, Tanggal Lahir
-                </h2>
-                <p className="text-gray-500">Denpasar, 01 Agustus 2005</p>
+                <h2 className="mb-1 text-lg font-medium">Tanggal Lahir</h2>
+                <p className="text-gray-500">
+                  {new Date(userData.tanggal_lahir).toLocaleDateString()}
+                </p>
               </div>
 
               <div>
                 <h2 className="mb-1 text-lg font-medium">No Telp.</h2>
-                <p className="text-gray-500">081239199662</p>
+                <p className="text-gray-500">{userData.no_telp}</p>
               </div>
 
               <Link href="/profileUser/updateUser">
