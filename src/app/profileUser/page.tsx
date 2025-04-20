@@ -74,7 +74,7 @@ const Page = () => {
               />
             </div>
 
-            <h1 className="mb-2 text-center text-3xl font-bold">
+            <h1 className="mb-2 text-center text-3xl font-bold text-black">
               {userData.nama}
             </h1>
             <p className="mb-8 text-center text-gray-500">
@@ -99,41 +99,41 @@ const Page = () => {
           <div className="rounded-lg bg-white p-6 shadow-md md:col-span-2">
             <div className="space-y-6">
               <div>
-                <h2 className="mb-1 text-lg font-medium">Nama Lengkap</h2>
+                <h2 className="mb-1 text-lg font-medium text-black">Nama Lengkap</h2>
                 <p className="text-gray-500">{userData.nama}</p>
               </div>
 
               <div>
-                <h2 className="mb-1 text-lg font-medium">
+                <h2 className="mb-1 text-lg font-medium text-black">
                   NIM (khusus Mahasiswa Stikom)
                 </h2>
                 <p className="text-gray-500">{userData.nim}</p>
               </div>
 
               <div>
-                <h2 className="mb-1 text-lg font-medium">Email</h2>
+                <h2 className="mb-1 text-lg font-medium text-black">Email</h2>
                 <p className="text-gray-500">{userData.email}</p>
               </div>
 
               <div>
-                <h2 className="mb-1 text-lg font-medium">Alamat Lengkap</h2>
+                <h2 className="mb-1 text-lg font-medium text-black">Alamat Lengkap</h2>
                 <p className="text-gray-500">{userData.alamat}</p>
               </div>
 
               <div>
-                <h2 className="mb-1 text-lg font-medium">Golongan Darah</h2>
+                <h2 className="mb-1 text-lg font-medium text-black">Golongan Darah</h2>
                 <p className="text-gray-500">{userData.golongan_darah}</p>
               </div>
 
               <div>
-                <h2 className="mb-1 text-lg font-medium">Tanggal Lahir</h2>
+                <h2 className="mb-1 text-lg font-medium text-black">Tanggal Lahir</h2>
                 <p className="text-gray-500">
                   {new Date(userData.tanggal_lahir).toLocaleDateString()}
                 </p>
               </div>
 
               <div>
-                <h2 className="mb-1 text-lg font-medium">No Telp.</h2>
+                <h2 className="mb-1 text-lg font-medium text-black">No Telp.</h2>
                 <p className="text-gray-500">{userData.no_telp}</p>
               </div>
 

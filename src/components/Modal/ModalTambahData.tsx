@@ -16,6 +16,13 @@ const ModalTambahData: React.FC<ModalTambahDataProps> = ({ show, onClose, onAddE
   const [eventDate, setEventDate] = useState("");
   const [eventDescription, setEventDescription] = useState("");
 
+    // Fungsi untuk mereset form
+    const resetForm = () => {
+      setEventName("");
+      setEventDate("");
+      setEventDescription("");
+    };
+
   useEffect(() => {
     if (event) {
       setEventName(event.nama_event);
@@ -26,6 +33,12 @@ const ModalTambahData: React.FC<ModalTambahDataProps> = ({ show, onClose, onAddE
 
   const handleAddEvent = () => {
     onAddEvent(eventName, eventDate, eventDescription);
+    resetForm(); // Reset form setelah menambahkan event
+    onClose();
+  };
+
+  const handleClose = () => {
+    resetForm(); // Reset form saat modal ditutup
     onClose();
   };
 
@@ -57,7 +70,7 @@ const ModalTambahData: React.FC<ModalTambahDataProps> = ({ show, onClose, onAddE
         />
         <div className="flex justify-end">
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="mr-4 px-4 py-2 bg-gray-500 text-white rounded"
           >
             Cancel

@@ -117,8 +117,8 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-999 w-2/3 m-auto">
-      <div className="bg-white p-6 rounded-lg">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-999 w-full m-auto">
+      <div className="bg-white p-6 rounded-lg w-full md:w-2/3">
         <h2 className="text-2xl font-bold mb-4">{user ? "Edit User" : "Tambah User"}</h2>
         <input
           type="text"
