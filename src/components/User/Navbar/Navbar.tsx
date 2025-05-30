@@ -1,27 +1,18 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<{
-    nama: string;
-    golongan_darah: string;
-  } | null>(null);
-
-  // Simulasikan mendapatkan data user dari localStorage atau API
-  useEffect(() => {
-    const userData = localStorage.getItem("userData");
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
+  const { user, setUser } = useAuth();
+  console.log("User data in Navbar:", user);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userData");
-    setUser(null); // update state agar UI langsung berubah
+    setUser(null); // update context agar UI langsung berubah
     window.location.href = "/auth/signin";
   };
 
@@ -81,10 +72,9 @@ export default function Navbar() {
         </div>
 
         {/* Sign up button - Desktop */}
-
         {user ? (
           <Link href="/profileUser" className="hidden md:block">
-            <div className=" hidden items-center space-x-2 md:flex">
+            <div className="hidden items-center space-x-2 md:flex">
               <span className="font-semibold text-white">{user.nama}, </span>
               <div className="group relative inline-block">
                 <span className="cursor-default rounded-3xl bg-white px-3 font-bold text-teal-800">
@@ -95,7 +85,7 @@ export default function Navbar() {
                 </span>
               </div>
               <Image
-                src="/images/user/DefaultProfile.jpg" // Ganti dengan gambar profil asli jika ada
+                src="/images/user/DefaultProfile.jpg"
                 alt="Profile"
                 width={32}
                 height={32}
@@ -142,7 +132,7 @@ export default function Navbar() {
             {user ? (
               <Link href="/profileUser" className="flex hover:text-yellow-300">
                 <Image
-                  src="/images/user/DefaultProfile.jpg" // Ganti dengan gambar profil asli jika ada
+                  src="/images/user/DefaultProfile.jpg"
                   alt="Profile"
                   width={32}
                   height={32}

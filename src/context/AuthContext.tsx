@@ -8,7 +8,39 @@ const AuthContext = createContext<{
 
 // 2. Provider untuk membungkus aplikasi
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUserState] = useState<any>(null);
+
+  // Hanya ambil field yang diizinkan
+  const filterUser = (userObj: any) => {
+    if (!userObj) return null;
+    const {
+      id_user,
+      email,
+      nama,
+      nim,
+      no_telp,
+      golongan_darah,
+      tanggal_lahir,
+      alamat,
+      level_user,
+    } = userObj;
+    return {
+      id_user,
+      email,
+      nama,
+      nim,
+      no_telp,
+      golongan_darah,
+      tanggal_lahir,
+      alamat,
+      level_user,
+    };
+  };
+
+  // Custom setUser agar hanya field yang diizinkan
+  const setUser = (userObj: any) => {
+    setUserState(filterUser(userObj));
+  };
 
   // Ambil user dari localStorage saat pertama kali load
   useEffect(() => {
