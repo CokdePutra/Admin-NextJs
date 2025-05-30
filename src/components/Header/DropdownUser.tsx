@@ -1,13 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ClickOutside from "@/components/ClickOutside";
-import { useAuth } from "@/utils/auth";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { logout } = useAuth();
+  const [user, setUser] = useState<{
+    nama: string;
+    email: string;
+  } | null>(null);
+  // Simulasikan mendapatkan data user dari localStorage atau API
+  useEffect(() => {
+    const userData = localStorage.getItem("userData");
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userData");
+    setUser(null); // update state agar UI langsung berubah
+    window.location.href = "/auth/signin";
+  };
   return (
     <ClickOutside onClick={() => setDropdownOpen(false)} className="relative">
       <Link
@@ -30,7 +45,7 @@ const DropdownUser = () => {
         </span>
 
         <span className="flex items-center gap-2 font-medium text-dark dark:text-dark-6">
-          <span className="hidden lg:block">Jhon Smith</span>
+          <span className="hidden lg:block">{user?.nama || "User"}</span>
 
           <svg
             className={`fill-current duration-200 ease-in ${dropdownOpen && "rotate-180"}`}
@@ -74,15 +89,15 @@ const DropdownUser = () => {
 
             <span className="block">
               <span className="block font-medium text-dark dark:text-white">
-                Jhon Smith
+                {user?.nama || "User"}
               </span>
               <span className="block font-medium text-dark-5 dark:text-dark-6">
-                jonson@nextadmin.com
+                {user?.email || "User"}
               </span>
             </span>
           </div>
           <ul className="flex flex-col gap-1 border-y-[0.5px] border-stroke p-2.5 dark:border-dark-3">
-            <li>
+            {/* <li>
               <Link
                 href="/profile"
                 className="flex w-full items-center gap-2.5 rounded-[7px] p-2.5 text-sm font-medium text-dark-4 duration-300 ease-in-out hover:bg-gray-2 hover:text-dark dark:text-dark-6 dark:hover:bg-dark-3 dark:hover:text-white lg:text-base"
@@ -140,10 +155,13 @@ const DropdownUser = () => {
                 </svg>
                 Account Settings
               </Link>
-            </li>
+            </li> */}
           </ul>
           <div className="p-2.5">
-            <button onClick={logout} className="flex w-full items-center gap-2.5 rounded-[7px] p-2.5 text-sm font-medium text-dark-4 duration-300 ease-in-out hover:bg-gray-2 hover:text-dark dark:text-dark-6 dark:hover:bg-dark-3 dark:hover:text-white lg:text-base">
+            <button
+              onClick={handleLogout}
+              className="flex w-full items-center gap-2.5 rounded-[7px] p-2.5 text-sm font-medium text-dark-4 duration-300 ease-in-out hover:bg-gray-2 hover:text-dark dark:text-dark-6 dark:hover:bg-dark-3 dark:hover:text-white lg:text-base"
+            >
               <svg
                 className="fill-current"
                 width="18"

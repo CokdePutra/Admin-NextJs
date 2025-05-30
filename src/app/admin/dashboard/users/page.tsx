@@ -29,7 +29,7 @@ interface User {
   level_user: string;
 }
 
-const Home = () => {
+const ListUsers = () => {
   const { isAuthenticated, loading, user } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -143,4 +143,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default ListUsers;

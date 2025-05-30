@@ -1,32 +1,49 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const authMiddleware = require("../middleware/auth"); // ✅ Perbaikan path
 const router = express.Router();
 
-// ✅ Middleware untuk mendapatkan user yang sedang login
-router.get("/me", (req, res) => {
+/**
+ * GET /me
+ * Mengambil data user yang sedang login berdasarkan token JWT.
+ * Token diambil dari header Authorization.
+ * Response: data user lengkap dari database.
+ */
+router.get("/me", async (req, res) => {
   const authHeader = req.headers.authorization;
-  console.log("Auth Header:", authHeader); // Debugging
-
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Token tidak ditemukan" });
   }
 
   const token = authHeader.split(" ")[1];
-  console.log("Token Diterima:", token); // Debugging
-
   try {
+    // Decode token untuk mendapatkan id_user
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Token Terdecode:", decoded); // Debugging
-    res.json({ user: decoded });
+    const id_user = decoded.id_user;
+
+    // Query ke database untuk ambil data user lengkap
+    const [rows] = await req.db
+      .promise()
+      .query(
+        "SELECT id_user, email, nama, nim, no_telp, golongan_darah, tanggal_lahir, alamat, level_user FROM tb_user WHERE id_user = ?",
+        [id_user],
+      );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "User tidak ditemukan" });
+    }
+
+    res.json({ user: rows[0] });
   } catch (error) {
-    console.error("Token tidak valid:", error);
     res.status(401).json({ message: "Token tidak valid" });
   }
 });
 
-// ✅ Register User dengan Validasi Input
+/**
+ * POST /register
+ * Registrasi user baru.
+ * Validasi input, hash password, dan simpan ke database.
+ */
 router.post("/register", async (req, res) => {
   const {
     email,
@@ -40,6 +57,7 @@ router.post("/register", async (req, res) => {
     level_user,
   } = req.body;
 
+  // Validasi input wajib
   if (!email || !password || !nama) {
     return res
       .status(400)
@@ -47,8 +65,10 @@ router.post("/register", async (req, res) => {
   }
 
   try {
+    // Hash password sebelum disimpan
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Simpan user ke database
     const [result] = await req.db
       .promise()
       .query(
@@ -75,17 +95,20 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// ✅ Login User dengan Token yang Aman
+/**
+ * POST /login
+ * Login user, validasi password, generate JWT, dan kirim data user.
+ */
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
+  // Validasi input
   if (!email || !password) {
     return res.status(400).json({ message: "Email dan Password wajib diisi" });
   }
 
   try {
-    console.log("Data login diterima:", email, password); // Debugging
-
+    // Cari user berdasarkan email
     const [users] = await req.db
       .promise()
       .query("SELECT * FROM tb_user WHERE email = ?", [email]);
@@ -95,33 +118,55 @@ router.post("/login", async (req, res) => {
     }
 
     const user = users[0];
-    const isValidPassword = await bcrypt.compare(password, user.password);
 
+    // Cek password
+    const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
       return res.status(401).json({ message: "Email atau Password salah" });
     }
 
-    console.log("JWT_SECRET:", process.env.JWT_SECRET);
+    // Generate JWT (hanya id_user dan level_user, jangan simpan data sensitif di token)
     const token = jwt.sign(
-      { id_user: user.id_user, level_user: user.level_user },
+      {
+        id_user: user.id_user,
+        level_user: user.level_user,
+      },
       process.env.JWT_SECRET,
       { expiresIn: "1h" },
     );
 
-    console.log("Token yang dihasilkan:", token); // Debugging
+    // Set cookie token (opsional, jika ingin pakai cookie)
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
     });
 
-    res.json({ message: "Login berhasil", token, user });
+    // Kirim data user lengkap ke frontend (bukan dari token, tapi dari database)
+    res.json({
+      message: "Login berhasil",
+      token,
+      user: {
+        id_user: user.id_user,
+        email: user.email,
+        nama: user.nama,
+        nim: user.nim,
+        no_telp: user.no_telp,
+        golongan_darah: user.golongan_darah,
+        tanggal_lahir: user.tanggal_lahir,
+        alamat: user.alamat,
+        level_user: user.level_user,
+      },
+    });
   } catch (error) {
-    console.error("Login error:", error);
     res.status(500).json({ message: "Terjadi kesalahan saat login" });
   }
 });
 
+/**
+ * POST /logout
+ * Logout user, hapus cookie token.
+ */
 router.post("/logout", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,

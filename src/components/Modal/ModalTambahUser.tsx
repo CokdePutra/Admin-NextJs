@@ -30,7 +30,7 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
   const [userGolonganDarah, setUserGolonganDarah] = useState("");
   const [userTanggalLahir, setUserTanggalLahir] = useState("");
   const [userAlamat, setUserAlamat] = useState("");
-  const [userlevel_user, setUserLevel] = useState("");
+  const [userLevel, setUserLevel] = useState("");
 
   const resetForm = () => {
     setUserEmail("");
@@ -47,7 +47,7 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
   useEffect(() => {
     if (user) {
       setUserEmail(user.email || "");
-      setUserPassword("");
+      setUserPassword(user.password || "");
       setUserName(user.nama || "");
       setUserNim(user.nim || "");
       setUserNoTelp(user.no_telp || "");
@@ -73,44 +73,43 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
   };
 
   const handleSaveUser = async () => {
-    const userData = {
-      email: userEmail,
-      password: userPassword,
-      nama: userName,
-      nim: userNim,
-      no_telp: userNoTelp,
-      golongan_darah: userGolonganDarah,
-      tanggal_lahir: userTanggalLahir,
-      alamat: userAlamat,
-      level_user: userlevel_user,
-    };
-
-    console.log("Sending user data:", userData);
-
-    if (user && user.id_user) {
-      try {
-        const response = await fetch(`/api/users/${user.id_user}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(userData),
-        });
-
-        const result = await response.json();
-        console.log("Update Response:", result);
-
-        if (response.ok) {
-          alert("User berhasil diperbarui!");
-        } else {
-          alert("Gagal memperbarui user.");
-        }
-      } catch (error) {
-        console.error("Update Error:", error);
-        alert("Terjadi kesalahan saat update.");
-      }
-    } else {
-      onAddUser(userEmail, userPassword, userName, userNim, userNoTelp, userGolonganDarah, userTanggalLahir, userAlamat, userlevel_user);
+    if (!userEmail || !userName || !userNim || !userNoTelp || !userGolonganDarah || !userTanggalLahir || !userAlamat || !userLevel) {
+      alert("Semua field kecuali password wajib diisi!");
+      return;
     }
 
+    if (user && user.id_user) {
+      // Update user
+      onEditUser(
+        user.id_user,
+        userEmail,
+        userPassword,
+        userName,
+        userNim,
+        userNoTelp,
+        userGolonganDarah,
+        userTanggalLahir,
+        userAlamat,
+        userLevel
+      );
+      alert("User berhasil diperbarui!");
+    } else {
+      // Add new user
+      onAddUser(
+        userEmail,
+        userPassword,
+        userName,
+        userNim,
+        userNoTelp,
+        userGolonganDarah,
+        userTanggalLahir,
+        userAlamat,
+        userLevel
+      );
+      alert("User berhasil ditambahkan!");
+    }
+
+    resetForm();
     onClose();
   };
 
@@ -131,7 +130,6 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
         <input
           type="password"
           placeholder="Password (jangan diisi jika tidak ingin diubah)"
-          required
           value={userPassword}
           onChange={(e) => setUserPassword(e.target.value)}
           className="mb-4 p-2 border rounded w-full"
@@ -179,7 +177,7 @@ const ModalTambahUser: React.FC<ModalTambahUserProps> = ({ show, onClose, onAddU
         />
         <select
           required
-          value={userlevel_user}
+          value={userLevel}
           onChange={(e) => setUserLevel(e.target.value)}
           className="mb-4 p-2 border rounded w-full"
         >

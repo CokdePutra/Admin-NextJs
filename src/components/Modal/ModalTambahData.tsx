@@ -26,7 +26,13 @@ const ModalTambahData: React.FC<ModalTambahDataProps> = ({ show, onClose, onAddE
   useEffect(() => {
     if (event) {
       setEventName(event.nama_event);
-      setEventDate(event.tanggal_event);
+      // setEventDate(event.tanggal_event);
+      if (event.tanggal_event) {
+        const formattedDate = new Date(event.tanggal_event).toISOString().split("T")[0];
+        setEventDate(formattedDate);
+      } else {
+        setEventDate("");
+      }
       setEventDescription(event.deskripsi);
     }
   }, [event]);
