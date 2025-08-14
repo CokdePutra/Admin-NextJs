@@ -17,7 +17,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 z-50 w-full bg-teal-800 p-3 px-8 shadow-md">
+    <nav className="fixed top-[-2px] z-50 w-full bg-teal-800 p-3 px-8 shadow-md">
       <div className="container mx-auto flex flex-wrap items-center justify-between">
         <Image
           src="/images/logo/Logo_KSR_2.png"
