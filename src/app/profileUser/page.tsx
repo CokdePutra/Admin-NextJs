@@ -1,6 +1,6 @@
 "use client";
 import Navbar from "@/components/User/Navbar/Navbar";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import QRCode from "react-qr-code";
@@ -28,6 +28,21 @@ const Page = () => {
   const { user } = useAuth();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  const handleClickProfile = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setPreviewImage(imageUrl);
+    }
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -64,14 +79,29 @@ const Page = () => {
         <main className="mx-auto mt-20 grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-3">
           {/* Left Panel */}
           <div className="flex h-fit flex-col items-center rounded-lg bg-white p-6 shadow-md md:col-span-1">
-            <div className="relative h-40 w-40 overflow-hidden rounded-full">
+            <div
+              onClick={handleClickProfile}
+              className="group relative m-10 h-40 w-40 cursor-pointer overflow-hidden rounded-full"
+            >
               <Image
-                src="/images/logo/Logo_KSR_1.png"
+                src={previewImage || "/images/logo/Logo_KSR_1.png"}
                 alt="Profile Picture"
                 width={160}
                 height={160}
+                className="object-cover"
                 priority
               />
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                className="hidden"
+              />
+              {/* Overlay */}
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-sm font-semibold text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                Ganti Profile
+              </div>
             </div>
 
             <h1 className="mb-2 text-center text-3xl font-bold text-black">
@@ -99,7 +129,9 @@ const Page = () => {
           <div className="rounded-lg bg-white p-6 shadow-md md:col-span-2">
             <div className="space-y-6">
               <div>
-                <h2 className="mb-1 text-lg font-medium text-black">Nama Lengkap</h2>
+                <h2 className="mb-1 text-lg font-medium text-black">
+                  Nama Lengkap
+                </h2>
                 <p className="text-gray-500">{userData.nama}</p>
               </div>
 
@@ -116,24 +148,32 @@ const Page = () => {
               </div>
 
               <div>
-                <h2 className="mb-1 text-lg font-medium text-black">Alamat Lengkap</h2>
+                <h2 className="mb-1 text-lg font-medium text-black">
+                  Alamat Lengkap
+                </h2>
                 <p className="text-gray-500">{userData.alamat}</p>
               </div>
 
               <div>
-                <h2 className="mb-1 text-lg font-medium text-black">Golongan Darah</h2>
+                <h2 className="mb-1 text-lg font-medium text-black">
+                  Golongan Darah
+                </h2>
                 <p className="text-gray-500">{userData.golongan_darah}</p>
               </div>
 
               <div>
-                <h2 className="mb-1 text-lg font-medium text-black">Tanggal Lahir</h2>
+                <h2 className="mb-1 text-lg font-medium text-black">
+                  Tanggal Lahir
+                </h2>
                 <p className="text-gray-500">
                   {new Date(userData.tanggal_lahir).toLocaleDateString()}
                 </p>
               </div>
 
               <div>
-                <h2 className="mb-1 text-lg font-medium text-black">No Telp.</h2>
+                <h2 className="mb-1 text-lg font-medium text-black">
+                  No Telp.
+                </h2>
                 <p className="text-gray-500">{userData.no_telp}</p>
               </div>
 
