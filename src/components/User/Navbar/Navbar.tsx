@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import DropdownUser from "@/components/Header/DropdownUser";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,6 +16,8 @@ export default function Navbar() {
     setUser(null); // update context agar UI langsung berubah
     window.location.href = "/auth/signin";
   };
+
+  const profileOption = () => {};
 
   return (
     <nav className="fixed top-[-2px] z-50 w-full bg-teal-800 p-3 px-8 shadow-md">
@@ -72,29 +75,12 @@ export default function Navbar() {
         </div>
 
         {/* Sign up button - Desktop */}
+
         {user ? (
-          <Link href="/profileUser" className="hidden md:block">
-            <div className="hidden items-center space-x-2 md:flex">
-              <span className="font-semibold text-white">{user.nama}, </span>
-              <div className="group relative inline-block">
-                <span className="cursor-default rounded-3xl bg-white px-3 font-bold text-teal-800">
-                  {user.golongan_darah}
-                </span>
-                <span className="absolute left-1/2 mt-6 w-max -translate-x-1/2 transform cursor-default rounded bg-white px-2 py-1 text-sm text-black opacity-0 transition-opacity group-hover:opacity-100">
-                  Golongan Darah {user.golongan_darah}
-                </span>
-              </div>
-              <Image
-                src="/images/user/DefaultProfile.jpg"
-                alt="Profile"
-                width={32}
-                height={32}
-                className="rounded-full"
-              />
-            </div>
-          </Link>
+          <DropdownUser />
         ) : (
           <div className="hidden md:flex">
+            <div onClick={profileOption} className=""></div>
             <Link
               href="/auth/signin"
               className="rounded-md bg-white px-4 py-2 text-teal-800 hover:bg-gray-200"
